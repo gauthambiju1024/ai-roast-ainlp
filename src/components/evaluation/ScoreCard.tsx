@@ -16,6 +16,10 @@ const scoreLabels = [
 ] as const;
 
 export const ScoreCard = ({ participantName, scores, isWinner, variant }: ScoreCardProps) => {
+  // Scores come in 0-100 range, display as integers
+  const formatScore = (score: number) => Math.round(score);
+  const getBarWidth = (score: number) => Math.min(score, 100);
+
   return (
     <div
       className={cn(
@@ -42,7 +46,7 @@ export const ScoreCard = ({ participantName, scores, isWinner, variant }: ScoreC
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">{label}</span>
               <span className="font-medium text-foreground">
-                {((scores[key] || 0) * 10).toFixed(1)}
+                {formatScore(scores[key] || 0)}
               </span>
             </div>
             <div className="score-bar">
@@ -51,7 +55,7 @@ export const ScoreCard = ({ participantName, scores, isWinner, variant }: ScoreC
                   "score-bar-fill",
                   variant === "secondary" && "bg-secondary"
                 )}
-                style={{ width: `${(scores[key] || 0) * 100}%` }}
+                style={{ width: `${getBarWidth(scores[key] || 0)}%` }}
               />
             </div>
           </div>
@@ -62,7 +66,7 @@ export const ScoreCard = ({ participantName, scores, isWinner, variant }: ScoreC
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium text-muted-foreground">Overall</span>
           <span className="text-2xl font-bold text-foreground">
-            {((scores.overall || 0) * 10).toFixed(1)}
+            {formatScore(scores.overall || 0)}
           </span>
         </div>
       </div>

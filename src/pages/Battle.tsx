@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Home } from "lucide-react";
+import { Home, RefreshCw } from "lucide-react";
 import { useBattleStore } from "@/store/battleStore";
 import { ChatBubble } from "@/components/battle/ChatBubble";
 import { ChatInput } from "@/components/battle/ChatInput";
 import { BattleTimer } from "@/components/battle/BattleTimer";
 import { MessageCounter } from "@/components/battle/MessageCounter";
 import { EvaluationModal } from "@/components/evaluation/EvaluationModal";
+import { DevPanel } from "@/components/evaluation/DevPanel";
 import { PERSONALITIES, BATTLE_CONFIG } from "@/config/battleConfig";
 import { HumanFeedback, EvaluationResult } from "@/types/battle";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,10 @@ const Battle = () => {
   const [isWaitingForAI, setIsWaitingForAI] = useState(false);
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evalError, setEvalError] = useState<string | null>(null);
+  const [devRequestPayload, setDevRequestPayload] = useState<object | null>(null);
+  const [devResponseData, setDevResponseData] = useState<object | null>(null);
+  const [lastThreadText, setLastThreadText] = useState<string>("");
 
   // Redirect if no battle
   useEffect(() => {
@@ -45,118 +50,96 @@ const Battle = () => {
            bMessages >= BATTLE_CONFIG.maxMessagesPerParticipant;
   }, [battle]);
 
-  const handleTimeUp = useCallback(() => {
-    if (battle?.status === "active") {
-      setBattleStatus("evaluating");
-      // Trigger evaluation
-      generateEvaluation();
-    }
-  }, [battle, setBattleStatus]);
+  // Build thread_text from messages (A:/B: format)
+  const buildThreadText = useCallback(() => {
+    if (!battle) return "";
+    
+    return battle.messages.map((msg) => {
+      const isA = msg.participantId === battle.participantA.id;
+      const label = isA ? "A" : "B";
+      return `${label}: ${msg.content}`;
+    }).join("\n");
+  }, [battle]);
 
-  const generateEvaluation = async () => {
+  const generateEvaluation = useCallback(async (threadText?: string) => {
     if (!battle) return;
     
     setIsEvaluating(true);
+    setEvalError(null);
+    
+    const thread_text = threadText || buildThreadText();
+    setLastThreadText(thread_text);
+    
+    const payload = { thread_text };
+    setDevRequestPayload(payload);
     
     try {
-      // Build thread_text, A_text, B_text from messages
-      const threadParts: string[] = [];
-      const aTexts: string[] = [];
-      const bTexts: string[] = [];
-      
-      battle.messages.forEach((msg) => {
-        const isA = msg.participantId === battle.participantA.id;
-        const label = isA ? "A" : "B";
-        threadParts.push(`${label}: ${msg.content}`);
-        
-        if (isA) {
-          aTexts.push(msg.content);
-        } else {
-          bTexts.push(msg.content);
-        }
-      });
-      
-      const thread_text = threadParts.join("\n");
-      const A_text = aTexts.join(" ");
-      const B_text = bTexts.join(" ");
-      
-      console.log("Calling BurnBookOracle API...");
+      console.log("Calling RoastJudge API via edge function...");
+      console.log("Payload:", JSON.stringify(payload, null, 2));
       
       const { data, error } = await supabase.functions.invoke('evaluate-battle', {
-        body: { thread_text, A_text, B_text }
+        body: payload
       });
+      
+      setDevResponseData(data || { error: error?.message });
       
       if (error) {
         console.error("Evaluation error:", error);
-        toast.error("Failed to evaluate battle. Using fallback scoring.");
-        throw error;
+        throw new Error(error.message || "Failed to evaluate battle");
       }
       
-      console.log("BurnBookOracle response:", data);
+      if (data?.error) {
+        throw new Error(data.error);
+      }
       
-      // Map API response to EvaluationResult
+      console.log("RoastJudge response:", data);
+      
+      // Map API response to EvaluationResult (scores are 0-100 floats)
       const evalResult: EvaluationResult = {
         participantAScores: {
-          humor: data.A_humor,
-          punch: data.A_punch,
-          originality: data.A_originality,
-          relevance: data.A_relevance,
-          overall: data.overall_A,
+          humor: data.A_humor ?? 0,
+          punch: data.A_punch ?? 0,
+          originality: data.A_originality ?? 0,
+          relevance: data.A_relevance ?? 0,
+          overall: data.overall_A ?? 0,
         },
         participantBScores: {
-          humor: data.B_humor,
-          punch: data.B_punch,
-          originality: data.B_originality,
-          relevance: data.B_relevance,
-          overall: data.overall_B,
+          humor: data.B_humor ?? 0,
+          punch: data.B_punch ?? 0,
+          originality: data.B_originality ?? 0,
+          relevance: data.B_relevance ?? 0,
+          overall: data.overall_B ?? 0,
         },
-        winner: data.winner as "A" | "B",
-        margin: Math.abs(data.margin),
-        llmVerdict: `The BurnBook Oracle has spoken! With an overall score of ${data.overall_A.toFixed(2)} vs ${data.overall_B.toFixed(2)}, Player ${data.winner} takes the crown. The margin of victory: ${Math.abs(data.margin).toFixed(2)} points.`,
+        winner: (data.winner === "A" || data.winner === "B" || data.winner === "TIE") 
+          ? data.winner 
+          : "TIE",
+        margin: Math.abs(data.margin ?? 0),
+        llmVerdict: `The RoastJudge has spoken! With an overall score of ${Math.round(data.overall_A)} vs ${Math.round(data.overall_B)}, Player ${data.winner} takes the crown${data.winner !== "TIE" ? `. Margin of victory: ${Math.abs(data.margin).toFixed(1)} points.` : "."}`,
+        threadText: thread_text,
       };
       
       setEvaluation(evalResult);
       setShowEvaluationModal(true);
     } catch (err) {
-      // Fallback to mock evaluation
-      console.error("Fallback to mock evaluation:", err);
-      const mockEvaluation: EvaluationResult = {
-        participantAScores: {
-          humor: 0.7 + Math.random() * 0.2,
-          punch: 0.6 + Math.random() * 0.3,
-          originality: 0.65 + Math.random() * 0.25,
-          relevance: 0.7 + Math.random() * 0.2,
-          overall: 0,
-        },
-        participantBScores: {
-          humor: 0.65 + Math.random() * 0.25,
-          punch: 0.7 + Math.random() * 0.2,
-          originality: 0.6 + Math.random() * 0.3,
-          relevance: 0.75 + Math.random() * 0.15,
-          overall: 0,
-        },
-        winner: "A",
-        margin: 0,
-        llmVerdict: "Evaluation service unavailable. Using fallback scoring.",
-      };
-      
-      mockEvaluation.participantAScores.overall = 
-        (mockEvaluation.participantAScores.humor + mockEvaluation.participantAScores.punch + 
-         mockEvaluation.participantAScores.originality + mockEvaluation.participantAScores.relevance) / 4;
-      
-      mockEvaluation.participantBScores.overall = 
-        (mockEvaluation.participantBScores.humor + mockEvaluation.participantBScores.punch + 
-         mockEvaluation.participantBScores.originality + mockEvaluation.participantBScores.relevance) / 4;
-      
-      mockEvaluation.margin = Math.abs(mockEvaluation.participantAScores.overall - mockEvaluation.participantBScores.overall);
-      mockEvaluation.winner = mockEvaluation.participantAScores.overall > mockEvaluation.participantBScores.overall ? "A" : "B";
-      
-      setEvaluation(mockEvaluation);
-      setShowEvaluationModal(true);
+      console.error("Evaluation failed:", err);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      setEvalError(errorMessage);
+      toast.error("Evaluation failed. Please try again.");
     } finally {
       setIsEvaluating(false);
     }
+  }, [battle, buildThreadText, setEvaluation]);
+
+  const handleRetryEvaluation = () => {
+    generateEvaluation(lastThreadText);
   };
+
+  const handleTimeUp = useCallback(() => {
+    if (battle?.status === "active") {
+      setBattleStatus("evaluating");
+      generateEvaluation();
+    }
+  }, [battle, setBattleStatus, generateEvaluation]);
 
   const simulateAIResponse = useCallback((participantId: string, personalityId?: string) => {
     setIsWaitingForAI(true);
@@ -181,7 +164,7 @@ const Battle = () => {
         generateEvaluation();
       }
     }, 1500 + Math.random() * 1000);
-  }, [addMessage, checkBattleEnd, setBattleStatus]);
+  }, [addMessage, checkBattleEnd, setBattleStatus, generateEvaluation]);
 
   const handleSendMessage = (content: string) => {
     if (!battle || battle.status !== "active") return;
@@ -235,7 +218,6 @@ const Battle = () => {
 
   const handleFeedbackSubmit = (feedback: HumanFeedback) => {
     setHumanFeedback(feedback);
-    // In production, this would save to Supabase
     console.log("Feedback submitted:", feedback);
   };
 
@@ -286,7 +268,7 @@ const Battle = () => {
             )}
           </h1>
           
-          <div className="w-20" /> {/* Spacer for centering */}
+          <div className="w-20" />
         </div>
       </header>
 
@@ -337,7 +319,22 @@ const Battle = () => {
                 <div className="w-12 h-12 rounded-full gradient-fire flex items-center justify-center">
                   <span className="text-2xl">🔥</span>
                 </div>
-                <p className="text-muted-foreground font-medium">The BurnBook Oracle is judging...</p>
+                <p className="text-muted-foreground font-medium">Judging the battle...</p>
+              </div>
+            )}
+
+            {evalError && !isEvaluating && (
+              <div className="flex flex-col items-center justify-center py-6 gap-3">
+                <div className="px-4 py-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                  Evaluation failed: {evalError}
+                </div>
+                <button
+                  onClick={handleRetryEvaluation}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Retry Evaluation
+                </button>
               </div>
             )}
             
@@ -362,7 +359,7 @@ const Battle = () => {
           )}
         </div>
 
-        {/* Sidebar - Timer & Counter */}
+        {/* Sidebar */}
         <div className="lg:w-64 flex flex-row lg:flex-col gap-4">
           <div className="flex-1 lg:flex-none p-4 rounded-xl border border-border bg-card">
             <BattleTimer
@@ -387,9 +384,11 @@ const Battle = () => {
               <h3 className="font-semibold text-foreground">Battle Complete</h3>
               <p className="text-sm text-muted-foreground">
                 Winner: <span className="text-primary font-medium">
-                  {evaluation.winner === "A" 
-                    ? (battle.mode === "human_vs_ai" ? "You" : personalityA?.name)
-                    : personalityB?.name}
+                  {evaluation.winner === "TIE" 
+                    ? "It's a tie!" 
+                    : evaluation.winner === "A" 
+                      ? (battle.mode === "human_vs_ai" ? "You" : personalityA?.name)
+                      : personalityB?.name}
                 </span>
               </p>
               <button
@@ -406,6 +405,9 @@ const Battle = () => {
               </button>
             </div>
           )}
+
+          {/* Dev Panel */}
+          <DevPanel requestPayload={devRequestPayload} responseData={devResponseData} />
         </div>
       </div>
 

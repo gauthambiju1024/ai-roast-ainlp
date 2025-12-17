@@ -38,9 +38,10 @@ export interface RoastScores {
 export interface EvaluationResult {
   participantAScores: RoastScores;
   participantBScores: RoastScores;
-  winner: "A" | "B" | "tie";
+  winner: "A" | "B" | "TIE";
   margin: number;
   llmVerdict?: string;
+  threadText?: string; // For transcript display
 }
 
 export interface HumanFeedback {
