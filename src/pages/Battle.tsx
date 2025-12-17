@@ -10,7 +10,7 @@ import { EvaluationModal } from "@/components/evaluation/EvaluationModal";
 import { DevPanel } from "@/components/evaluation/DevPanel";
 import { PERSONALITIES, BATTLE_CONFIG, PERSONALITY_DESCRIPTIONS } from "@/config/battleConfig";
 import { getLyzrAgent } from "@/config/lyzrAgents";
-import { HumanFeedback, EvaluationResult } from "@/types/battle";
+import { HumanFeedback, EvaluationResult, AgentEvaluation } from "@/types/battle";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { extractAText, extractBText, calculateHumanOverall, scaleToHundred } from "@/lib/battleDataUtils";
@@ -381,6 +381,45 @@ const Battle = () => {
     console.log("Feedback submitted:", feedback);
   };
 
+  const saveAgentEvaluation = async (evaluations: AgentEvaluation[]) => {
+    if (!battle) return;
+    
+    const { sessionUserId } = useBattleStore.getState();
+    
+    for (const evalData of evaluations) {
+      const agentEvalRecord = {
+        battle_id: battle.id,
+        agent_participant: evalData.participantId,
+        agent_personality: evalData.personality,
+        persona_match: evalData.scores.personaMatch * 100,
+        relevance: evalData.scores.relevance * 100,
+        fun_factor: evalData.scores.funFactor * 100,
+        originality: evalData.scores.originality * 100,
+        ethical_violation: evalData.scores.ethicalViolation,
+        mode: battle.mode,
+        intensity: battle.intensity as 'mild' | 'spicy',
+        session_id: sessionUserId,
+      };
+      
+      console.log("Saving agent evaluation:", agentEvalRecord);
+      
+      const { error } = await supabase
+        .from('agent_evaluation')
+        .insert(agentEvalRecord);
+        
+      if (error) {
+        console.error('Failed to save agent evaluation:', error);
+        toast.error('Failed to save agent evaluation');
+      }
+    }
+    
+    console.log('Agent evaluations saved successfully');
+  };
+
+  const handleAgentEvaluationSubmit = async (evaluations: AgentEvaluation[]) => {
+    await saveAgentEvaluation(evaluations);
+  };
+
   const handleEvaluationClose = () => {
     setShowEvaluationModal(false);
     setBattleStatus("complete");
@@ -581,6 +620,10 @@ const Battle = () => {
         evaluation={evaluation}
         participantAName={battle.mode === "human_vs_ai" ? "You" : personalityA?.name || "AI A"}
         participantBName={personalityB?.name || "AI B"}
+        participantAPersonality={battle.participantA.personalityId}
+        participantBPersonality={battle.participantB.personalityId}
+        mode={battle.mode}
+        onAgentEvaluationSubmit={handleAgentEvaluationSubmit}
         onFeedbackSubmit={handleFeedbackSubmit}
       />
     </div>

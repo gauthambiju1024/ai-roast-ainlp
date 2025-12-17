@@ -57,6 +57,20 @@ export interface HumanFeedback {
   freeText?: string;
 }
 
+export interface AgentEvaluationScores {
+  personaMatch: number;      // 0-1 slider
+  relevance: number;         // 0-1 slider
+  funFactor: number;         // 0-1 slider
+  originality: number;       // 0-1 slider
+  ethicalViolation: boolean; // Yes/No
+}
+
+export interface AgentEvaluation {
+  participantId: 'A' | 'B';
+  personality: string;
+  scores: AgentEvaluationScores;
+}
+
 export interface BattleRecord {
   battle_id: string;
   thread_text: string;
