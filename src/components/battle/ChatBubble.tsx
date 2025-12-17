@@ -51,7 +51,7 @@ export const ChatBubble = ({
     setIsTyping(true);
 
     let currentIndex = 0;
-    const typingSpeed = 20; // ms per character
+    const typingSpeed = 35; // ms per character
 
     const typingInterval = setInterval(() => {
       if (currentIndex < content.length) {
