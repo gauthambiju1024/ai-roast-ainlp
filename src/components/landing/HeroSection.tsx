@@ -7,7 +7,7 @@ export const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#0f1729] flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen gradient-hero flex flex-col items-center justify-center px-4 py-12">
       {/* Floating flame icon */}
       <div className="animate-float mb-8">
         <div className="w-20 h-20 rounded-full gradient-fire flex items-center justify-center glow-primary">
@@ -18,10 +18,10 @@ export const HeroSection = () => {
       {/* Main headline */}
       <h1 className="text-5xl md:text-7xl font-extrabold text-center mb-4 animate-in" style={{ animationDelay: '0.1s' }}>
         <span className="text-gradient-fire">AI Roast</span>{" "}
-        <span className="text-white">Battle</span>
+        <span className="text-foreground">Battle</span>
       </h1>
 
-      <p className="text-gray-400 text-lg md:text-xl text-center max-w-md mb-16 animate-in" style={{ animationDelay: '0.2s' }}>
+      <p className="text-muted-foreground text-lg md:text-xl text-center max-w-md mb-16 animate-in" style={{ animationDelay: '0.2s' }}>
         Where algorithms meet attitude
       </p>
 
