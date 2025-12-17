@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Home } from "lucide-react";
+import { Home } from "lucide-react";
 import { useBattleStore } from "@/store/battleStore";
 import { ChatBubble } from "@/components/battle/ChatBubble";
 import { ChatInput } from "@/components/battle/ChatInput";
@@ -9,7 +9,8 @@ import { MessageCounter } from "@/components/battle/MessageCounter";
 import { EvaluationModal } from "@/components/evaluation/EvaluationModal";
 import { PERSONALITIES, BATTLE_CONFIG } from "@/config/battleConfig";
 import { HumanFeedback, EvaluationResult } from "@/types/battle";
-import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Battle = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Battle = () => {
   
   const [isWaitingForAI, setIsWaitingForAI] = useState(false);
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
+  const [isEvaluating, setIsEvaluating] = useState(false);
 
   // Redirect if no battle
   useEffect(() => {
@@ -51,42 +53,109 @@ const Battle = () => {
     }
   }, [battle, setBattleStatus]);
 
-  const generateEvaluation = () => {
-    // Mock evaluation - in production this would call the ML Judge API and LLM
-    const mockEvaluation: EvaluationResult = {
-      participantAScores: {
-        humor: 0.7 + Math.random() * 0.2,
-        punch: 0.6 + Math.random() * 0.3,
-        originality: 0.65 + Math.random() * 0.25,
-        relevance: 0.7 + Math.random() * 0.2,
-        overall: 0,
-      },
-      participantBScores: {
-        humor: 0.65 + Math.random() * 0.25,
-        punch: 0.7 + Math.random() * 0.2,
-        originality: 0.6 + Math.random() * 0.3,
-        relevance: 0.75 + Math.random() * 0.15,
-        overall: 0,
-      },
-      winner: "A",
-      margin: 0,
-      llmVerdict: "In a battle of wits and wordplay, both contestants brought their A-game. However, the slight edge in delivery and timing gave the victory to the challenger. The roasts were crispy, the comebacks were snappy, and the audience was thoroughly entertained.",
-    };
-
-    // Calculate overall scores
-    mockEvaluation.participantAScores.overall = 
-      (mockEvaluation.participantAScores.humor + mockEvaluation.participantAScores.punch + 
-       mockEvaluation.participantAScores.originality + mockEvaluation.participantAScores.relevance) / 4;
+  const generateEvaluation = async () => {
+    if (!battle) return;
     
-    mockEvaluation.participantBScores.overall = 
-      (mockEvaluation.participantBScores.humor + mockEvaluation.participantBScores.punch + 
-       mockEvaluation.participantBScores.originality + mockEvaluation.participantBScores.relevance) / 4;
-
-    mockEvaluation.margin = Math.abs(mockEvaluation.participantAScores.overall - mockEvaluation.participantBScores.overall);
-    mockEvaluation.winner = mockEvaluation.participantAScores.overall > mockEvaluation.participantBScores.overall ? "A" : "B";
-
-    setEvaluation(mockEvaluation);
-    setShowEvaluationModal(true);
+    setIsEvaluating(true);
+    
+    try {
+      // Build thread_text, A_text, B_text from messages
+      const threadParts: string[] = [];
+      const aTexts: string[] = [];
+      const bTexts: string[] = [];
+      
+      battle.messages.forEach((msg) => {
+        const isA = msg.participantId === battle.participantA.id;
+        const label = isA ? "A" : "B";
+        threadParts.push(`${label}: ${msg.content}`);
+        
+        if (isA) {
+          aTexts.push(msg.content);
+        } else {
+          bTexts.push(msg.content);
+        }
+      });
+      
+      const thread_text = threadParts.join("\n");
+      const A_text = aTexts.join(" ");
+      const B_text = bTexts.join(" ");
+      
+      console.log("Calling BurnBookOracle API...");
+      
+      const { data, error } = await supabase.functions.invoke('evaluate-battle', {
+        body: { thread_text, A_text, B_text }
+      });
+      
+      if (error) {
+        console.error("Evaluation error:", error);
+        toast.error("Failed to evaluate battle. Using fallback scoring.");
+        throw error;
+      }
+      
+      console.log("BurnBookOracle response:", data);
+      
+      // Map API response to EvaluationResult
+      const evalResult: EvaluationResult = {
+        participantAScores: {
+          humor: data.A_humor,
+          punch: data.A_punch,
+          originality: data.A_originality,
+          relevance: data.A_relevance,
+          overall: data.overall_A,
+        },
+        participantBScores: {
+          humor: data.B_humor,
+          punch: data.B_punch,
+          originality: data.B_originality,
+          relevance: data.B_relevance,
+          overall: data.overall_B,
+        },
+        winner: data.winner as "A" | "B",
+        margin: Math.abs(data.margin),
+        llmVerdict: `The BurnBook Oracle has spoken! With an overall score of ${data.overall_A.toFixed(2)} vs ${data.overall_B.toFixed(2)}, Player ${data.winner} takes the crown. The margin of victory: ${Math.abs(data.margin).toFixed(2)} points.`,
+      };
+      
+      setEvaluation(evalResult);
+      setShowEvaluationModal(true);
+    } catch (err) {
+      // Fallback to mock evaluation
+      console.error("Fallback to mock evaluation:", err);
+      const mockEvaluation: EvaluationResult = {
+        participantAScores: {
+          humor: 0.7 + Math.random() * 0.2,
+          punch: 0.6 + Math.random() * 0.3,
+          originality: 0.65 + Math.random() * 0.25,
+          relevance: 0.7 + Math.random() * 0.2,
+          overall: 0,
+        },
+        participantBScores: {
+          humor: 0.65 + Math.random() * 0.25,
+          punch: 0.7 + Math.random() * 0.2,
+          originality: 0.6 + Math.random() * 0.3,
+          relevance: 0.75 + Math.random() * 0.15,
+          overall: 0,
+        },
+        winner: "A",
+        margin: 0,
+        llmVerdict: "Evaluation service unavailable. Using fallback scoring.",
+      };
+      
+      mockEvaluation.participantAScores.overall = 
+        (mockEvaluation.participantAScores.humor + mockEvaluation.participantAScores.punch + 
+         mockEvaluation.participantAScores.originality + mockEvaluation.participantAScores.relevance) / 4;
+      
+      mockEvaluation.participantBScores.overall = 
+        (mockEvaluation.participantBScores.humor + mockEvaluation.participantBScores.punch + 
+         mockEvaluation.participantBScores.originality + mockEvaluation.participantBScores.relevance) / 4;
+      
+      mockEvaluation.margin = Math.abs(mockEvaluation.participantAScores.overall - mockEvaluation.participantBScores.overall);
+      mockEvaluation.winner = mockEvaluation.participantAScores.overall > mockEvaluation.participantBScores.overall ? "A" : "B";
+      
+      setEvaluation(mockEvaluation);
+      setShowEvaluationModal(true);
+    } finally {
+      setIsEvaluating(false);
+    }
   };
 
   const simulateAIResponse = useCallback((participantId: string, personalityId?: string) => {
@@ -260,6 +329,15 @@ const Battle = () => {
                   <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
+              </div>
+            )}
+            
+            {isEvaluating && (
+              <div className="flex flex-col items-center justify-center py-8 gap-3 animate-pulse">
+                <div className="w-12 h-12 rounded-full gradient-fire flex items-center justify-center">
+                  <span className="text-2xl">🔥</span>
+                </div>
+                <p className="text-muted-foreground font-medium">The BurnBook Oracle is judging...</p>
               </div>
             )}
             
