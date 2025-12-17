@@ -8,7 +8,7 @@ import { BattleTimer } from "@/components/battle/BattleTimer";
 import { MessageCounter } from "@/components/battle/MessageCounter";
 import { EvaluationModal } from "@/components/evaluation/EvaluationModal";
 import { DevPanel } from "@/components/evaluation/DevPanel";
-import { PERSONALITIES, BATTLE_CONFIG } from "@/config/battleConfig";
+import { PERSONALITIES, BATTLE_CONFIG, PERSONALITY_DESCRIPTIONS } from "@/config/battleConfig";
 import { getLyzrAgent } from "@/config/lyzrAgents";
 import { HumanFeedback, EvaluationResult } from "@/types/battle";
 import { supabase } from "@/integrations/supabase/client";
@@ -142,7 +142,7 @@ const Battle = () => {
     }
   }, [battle, setBattleStatus, generateEvaluation]);
 
-  const callLyzrAPI = useCallback(async (participantId: string, personalityId: string) => {
+  const callLyzrAPI = useCallback(async (participantId: string, personalityId: string, contextMessage?: string) => {
     if (!battle) return;
     
     const { sessionUserId } = useBattleStore.getState();
@@ -159,10 +159,10 @@ const Battle = () => {
       return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
     }
     
-    // Build context from previous messages
-    const lastUserMessage = battle.messages.length > 0 
+    // Use contextMessage if provided, otherwise use last message
+    const messageToSend = contextMessage || (battle.messages.length > 0 
       ? battle.messages[battle.messages.length - 1].content 
-      : "Start the roast battle!";
+      : "Start the roast battle!");
     
     try {
       const { data, error } = await supabase.functions.invoke('lyzr-chat', {
@@ -171,7 +171,7 @@ const Battle = () => {
           intensity_id: battle.intensity,
           user_id: sessionUserId,
           session_id: battle.id,
-          message: lastUserMessage,
+          message: messageToSend,
         }
       });
       
@@ -190,11 +190,11 @@ const Battle = () => {
     }
   }, [battle]);
 
-  const simulateAIResponse = useCallback(async (participantId: string, personalityId?: string) => {
+  const simulateAIResponse = useCallback(async (participantId: string, personalityId?: string, contextMessage?: string) => {
     setIsWaitingForAI(true);
     
     try {
-      const response = await callLyzrAPI(participantId, personalityId || "trump");
+      const response = await callLyzrAPI(participantId, personalityId || "trump", contextMessage);
       addMessage(participantId, response);
     } catch (err) {
       console.error("AI response error:", err);
@@ -232,19 +232,29 @@ const Battle = () => {
     }
   };
 
-  // AI vs AI auto-battle
+  // AI vs AI auto-battle with opponent context injection
   useEffect(() => {
     if (!battle || battle.mode !== "ai_vs_ai" || battle.status !== "active") return;
     
     const totalMessages = battle.messages.length;
+    const opponentAId = battle.participantA.personalityId || "";
+    const opponentBId = battle.participantB.personalityId || "";
     
     if (totalMessages === 0) {
-      // Start the battle
+      // Participant A's FIRST message - inject opponent B's context
+      const contextForA = `${PERSONALITY_DESCRIPTIONS[opponentBId] || ""}\n\nThe roast battle has begun. Fire your opening roast!`;
       setTimeout(() => {
-        simulateAIResponse(battle.participantA.id, battle.participantA.personalityId);
+        simulateAIResponse(battle.participantA.id, battle.participantA.personalityId, contextForA);
       }, 1000);
+    } else if (totalMessages === 1 && !isWaitingForAI) {
+      // Participant B's FIRST message - inject opponent A's context + A's roast
+      const aFirstRoast = battle.messages[0].content;
+      const contextForB = `${PERSONALITY_DESCRIPTIONS[opponentAId] || ""}\n\nThey just roasted you with: "${aFirstRoast}"\n\nFire back!`;
+      setTimeout(() => {
+        simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextForB);
+      }, 2000);
     } else if (!isWaitingForAI && !checkBattleEnd()) {
-      // Alternate between A and B
+      // Subsequent messages - normal flow (agents have context in memory)
       const lastMessage = battle.messages[battle.messages.length - 1];
       const nextParticipant = lastMessage.participantId === battle.participantA.id 
         ? battle.participantB 
