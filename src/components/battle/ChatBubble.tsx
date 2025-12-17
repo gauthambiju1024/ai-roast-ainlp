@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ChatBubbleProps {
   content: string;
@@ -20,10 +20,27 @@ export const ChatBubble = ({
 }: ChatBubbleProps) => {
   const [displayedContent, setDisplayedContent] = useState(isUser || !enableTyping ? content : "");
   const [isTyping, setIsTyping] = useState(!isUser && enableTyping);
+  const hasCompletedTypingRef = useRef(false);
+  const onTypingCompleteRef = useRef(onTypingComplete);
+
+  // Keep the callback ref updated
+  onTypingCompleteRef.current = onTypingComplete;
+
+  // Reset completion flag when content changes
+  useEffect(() => {
+    hasCompletedTypingRef.current = false;
+  }, [content]);
 
   useEffect(() => {
     // If it's a user message or typing is disabled, show full content immediately
     if (isUser || !enableTyping) {
+      setDisplayedContent(content);
+      setIsTyping(false);
+      return;
+    }
+
+    // Skip if already completed typing for this content
+    if (hasCompletedTypingRef.current) {
       setDisplayedContent(content);
       setIsTyping(false);
       return;
@@ -43,12 +60,13 @@ export const ChatBubble = ({
       } else {
         clearInterval(typingInterval);
         setIsTyping(false);
-        onTypingComplete?.();
+        hasCompletedTypingRef.current = true;
+        onTypingCompleteRef.current?.();
       }
     }, typingSpeed);
 
     return () => clearInterval(typingInterval);
-  }, [content, isUser, enableTyping, onTypingComplete]);
+  }, [content, isUser, enableTyping]);
 
   return (
     <div
