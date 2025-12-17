@@ -565,7 +565,7 @@ const Battle = () => {
             <div className="flex-1 lg:flex-none p-4 rounded-xl border border-border bg-card">
               <BattleTimer
                 initialSeconds={battle.timeLimit}
-                isActive={battle.status === "active"}
+                isActive={battle.status === "active" && !isWaitingForAI}
                 onTimeUp={handleTimeUp}
               />
             </div>
