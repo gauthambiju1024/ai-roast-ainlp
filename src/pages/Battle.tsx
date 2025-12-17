@@ -13,6 +13,7 @@ import { getLyzrAgent } from "@/config/lyzrAgents";
 import { HumanFeedback, EvaluationResult } from "@/types/battle";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { extractAText, extractBText, calculateHumanOverall, scaleToHundred } from "@/lib/battleDataUtils";
 
 const Battle = () => {
   const navigate = useNavigate();
@@ -308,8 +309,75 @@ const Battle = () => {
     }
   }, [battle?.messages.length, battle?.mode, battle?.status, isWaitingForAI, simulateAIResponse, setBattleStatus, generateEvaluation]);
 
-  const handleFeedbackSubmit = (feedback: HumanFeedback) => {
+  const saveBattleTrainingData = useCallback(async (feedback: HumanFeedback) => {
+    if (!battle || !evaluation) return;
+    
+    const { sessionUserId } = useBattleStore.getState();
+    const A_text = extractAText(battle.messages, battle.participantA.id);
+    const B_text = extractBText(battle.messages, battle.participantA.id);
+    
+    const trainingData = {
+      battle_id: battle.id,
+      thread_text: evaluation.threadText || buildThreadText(),
+      a_text: A_text,
+      b_text: B_text,
+      
+      // Model scores (stored as-is, 0-100 scale)
+      a_humor: evaluation.participantAScores.humor,
+      a_punch: evaluation.participantAScores.punch,
+      a_originality: evaluation.participantAScores.originality,
+      a_relevance: evaluation.participantAScores.relevance,
+      b_humor: evaluation.participantBScores.humor,
+      b_punch: evaluation.participantBScores.punch,
+      b_originality: evaluation.participantBScores.originality,
+      b_relevance: evaluation.participantBScores.relevance,
+      
+      overall_a: evaluation.participantAScores.overall,
+      overall_b: evaluation.participantBScores.overall,
+      margin: evaluation.margin,
+      winner: evaluation.winner,
+      
+      // Human feedback (convert 0-1 to 0-100 for consistency)
+      human_a_humor: scaleToHundred(feedback.participantAScores.humor),
+      human_a_punch: scaleToHundred(feedback.participantAScores.punch),
+      human_a_originality: scaleToHundred(feedback.participantAScores.originality),
+      human_a_relevance: scaleToHundred(feedback.participantAScores.relevance),
+      human_b_humor: scaleToHundred(feedback.participantBScores.humor),
+      human_b_punch: scaleToHundred(feedback.participantBScores.punch),
+      human_b_originality: scaleToHundred(feedback.participantBScores.originality),
+      human_b_relevance: scaleToHundred(feedback.participantBScores.relevance),
+      human_overall_a: calculateHumanOverall(feedback.participantAScores),
+      human_overall_b: calculateHumanOverall(feedback.participantBScores),
+      human_feedback_text: feedback.freeText || null,
+      
+      // Metadata
+      mode: battle.mode,
+      agent_a_personality: battle.participantA.personalityId || null,
+      agent_b_personality: battle.participantB.personalityId || null,
+      intensity: battle.intensity as 'mild' | 'spicy',
+      time_limit_seconds: battle.timeLimit,
+      message_limit: BATTLE_CONFIG.maxMessagesPerParticipant,
+      session_id: sessionUserId,
+    };
+    
+    console.log("Saving training data:", trainingData);
+    
+    const { error } = await supabase
+      .from('battle_training_data')
+      .insert(trainingData);
+      
+    if (error) {
+      console.error('Failed to save training data:', error);
+      toast.error('Failed to save battle data');
+    } else {
+      console.log('Training data saved successfully');
+      toast.success('Battle recorded for training!');
+    }
+  }, [battle, evaluation, buildThreadText]);
+
+  const handleFeedbackSubmit = async (feedback: HumanFeedback) => {
     setHumanFeedback(feedback);
+    await saveBattleTrainingData(feedback);
     console.log("Feedback submitted:", feedback);
   };
 
