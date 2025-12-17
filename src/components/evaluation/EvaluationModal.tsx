@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScoreCard } from "./ScoreCard";
 import { FeedbackForm } from "./FeedbackForm";
+import { TranscriptViewer } from "./TranscriptViewer";
 import { EvaluationResult, HumanFeedback } from "@/types/battle";
 import { MessageSquare, Brain, User } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -83,14 +84,19 @@ export const EvaluationModal = ({
                 isWinner={evaluation.winner === "B"}
                 variant="secondary"
               />
-              {evaluation.winner !== "tie" && (
+              {evaluation.winner !== "TIE" && (
                 <div className="md:col-span-2 text-center py-4">
                   <p className="text-muted-foreground">
                     Margin of victory:{" "}
                     <span className="font-bold text-foreground">
-                      {(evaluation.margin * 10).toFixed(1)} points
+                      {Math.round(evaluation.margin)} points
                     </span>
                   </p>
+                </div>
+              )}
+              {evaluation.threadText && (
+                <div className="md:col-span-2">
+                  <TranscriptViewer threadText={evaluation.threadText} />
                 </div>
               )}
             </div>
