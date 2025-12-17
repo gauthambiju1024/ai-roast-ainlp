@@ -28,7 +28,15 @@ export const PersonalityCard = ({
       )}
     >
       <div className="flex items-center gap-3">
-        <span className="text-3xl">{personality.emoji}</span>
+        {personality.avatarImage ? (
+          <img 
+            src={personality.avatarImage} 
+            alt={personality.name}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+        ) : (
+          <span className="text-3xl">{personality.emoji}</span>
+        )}
         <div>
           <h3 className="font-semibold text-foreground">{personality.name}</h3>
           <p className="text-sm text-muted-foreground">{personality.description}</p>

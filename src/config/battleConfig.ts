@@ -7,6 +7,7 @@ export interface Personality {
   avatar: string;
   description: string;
   emoji: string;
+  avatarImage?: string;
 }
 
 export interface Intensity {
@@ -23,6 +24,13 @@ export interface TimeLimit {
   description: string;
 }
 
+import avatarTrump from "@/assets/avatar-trump.png";
+import avatarGandhi from "@/assets/avatar-gandhi.png";
+import avatarGenz from "@/assets/avatar-genz.png";
+import avatarMessi from "@/assets/avatar-messi.png";
+import avatarAmitabh from "@/assets/avatar-amitabh.png";
+import avatarHawking from "@/assets/avatar-hawking.png";
+
 export const PERSONALITIES: Personality[] = [
   {
     id: "trump",
@@ -30,6 +38,7 @@ export const PERSONALITIES: Personality[] = [
     avatar: "🇺🇸",
     description: "Tremendous roasts, believe me",
     emoji: "🇺🇸",
+    avatarImage: avatarTrump,
   },
   {
     id: "gandhi",
@@ -37,6 +46,7 @@ export const PERSONALITIES: Personality[] = [
     avatar: "🕊️",
     description: "Peaceful burns that hit different",
     emoji: "🕊️",
+    avatarImage: avatarGandhi,
   },
   {
     id: "genz",
@@ -44,6 +54,7 @@ export const PERSONALITIES: Personality[] = [
     avatar: "💀",
     description: "No cap, these roasts are bussin",
     emoji: "💀",
+    avatarImage: avatarGenz,
   },
   {
     id: "messi",
@@ -51,6 +62,7 @@ export const PERSONALITIES: Personality[] = [
     avatar: "⚽",
     description: "Goals on the field, roasts in the chat",
     emoji: "⚽",
+    avatarImage: avatarMessi,
   },
   {
     id: "amitabh",
@@ -58,6 +70,7 @@ export const PERSONALITIES: Personality[] = [
     avatar: "🎬",
     description: "Baritone burns from Bollywood",
     emoji: "🎬",
+    avatarImage: avatarAmitabh,
   },
   {
     id: "hawking",
@@ -65,6 +78,7 @@ export const PERSONALITIES: Personality[] = [
     avatar: "🌌",
     description: "Quantum-level intellectual takedowns",
     emoji: "🌌",
+    avatarImage: avatarHawking,
   },
 ];
 
