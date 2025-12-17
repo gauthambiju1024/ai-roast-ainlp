@@ -23,6 +23,8 @@ const Battle = () => {
   const { battle, evaluation, addMessage, setBattleStatus, setEvaluation, setHumanFeedback, resetBattle } = useBattleStore();
   
   const [isWaitingForAI, setIsWaitingForAI] = useState(false);
+  const [isTypingAI, setIsTypingAI] = useState(false); // Track when AI message is being typed
+  const [typingCompleteMessageId, setTypingCompleteMessageId] = useState<string | null>(null);
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evalError, setEvalError] = useState<string | null>(null);
@@ -198,19 +200,22 @@ const Battle = () => {
     try {
       const response = await callLyzrAPI(participantId, personalityId || "trump", contextMessage, humanMessage);
       addMessage(participantId, response);
+      setIsTypingAI(true); // Start typing animation
     } catch (err) {
       console.error("AI response error:", err);
       addMessage(participantId, "I'm at a loss for words... you win this round!");
+      setIsTypingAI(true);
     } finally {
       setIsWaitingForAI(false);
-      
-      // Check if battle should end
-      if (checkBattleEnd()) {
-        setBattleStatus("evaluating");
-        generateEvaluation();
-      }
+      // Note: Don't check battle end here - wait for typing to complete
     }
-  }, [callLyzrAPI, addMessage, checkBattleEnd, setBattleStatus, generateEvaluation]);
+  }, [callLyzrAPI, addMessage]);
+
+  // Handle typing completion - this triggers next actions
+  const handleTypingComplete = useCallback((messageId: string) => {
+    setIsTypingAI(false);
+    setTypingCompleteMessageId(messageId);
+  }, []);
 
   const handleSendMessage = (content: string) => {
     if (!battle || battle.status !== "active") return;
@@ -250,10 +255,10 @@ const Battle = () => {
     }
   };
 
-  // AI vs AI auto-battle with opponent context injection
+  // AI vs AI auto-battle - only proceeds when typing is complete
   useEffect(() => {
     if (!battle || battle.mode !== "ai_vs_ai" || battle.status !== "active") return;
-    if (aiTurnInProgress.current || isWaitingForAI) return; // Guard against double execution
+    if (aiTurnInProgress.current || isWaitingForAI || isTypingAI) return; // Guard against double execution and wait for typing
     
     const totalMessages = battle.messages.length;
     const opponentAId = battle.participantA.personalityId || "";
@@ -279,17 +284,17 @@ const Battle = () => {
         simulateAIResponse(battle.participantA.id, battle.participantA.personalityId, contextForA);
         aiTurnInProgress.current = false;
       }, 1000);
-    } else if (totalMessages === 1) {
-      // Participant B's FIRST message - inject opponent A's context + A's roast
+    } else if (totalMessages === 1 && typingCompleteMessageId) {
+      // Participant B's FIRST message - inject opponent A's context + A's roast (only after A's typing is done)
       aiTurnInProgress.current = true;
       const aFirstRoast = battle.messages[0].content;
       const contextForB = `${PERSONALITY_DESCRIPTIONS[opponentAId] || ""}\n\nThey just roasted you with: "${aFirstRoast}"\n\nFire back!`;
       setTimeout(() => {
         simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextForB);
         aiTurnInProgress.current = false;
-      }, 2000);
-    } else {
-      // Subsequent messages - pass the opponent's last message explicitly
+      }, 1000);
+    } else if (totalMessages > 1 && typingCompleteMessageId) {
+      // Subsequent messages - pass the opponent's last message explicitly (only after previous typing is done)
       const lastMessage = battle.messages[battle.messages.length - 1];
       const nextParticipant = lastMessage.participantId === battle.participantA.id 
         ? battle.participantB 
@@ -304,10 +309,21 @@ const Battle = () => {
         setTimeout(() => {
           simulateAIResponse(nextParticipant.id, nextParticipant.personalityId, undefined, opponentRoast);
           aiTurnInProgress.current = false;
-        }, 2000);
+        }, 1000);
       }
     }
-  }, [battle?.messages.length, battle?.mode, battle?.status, isWaitingForAI, simulateAIResponse, setBattleStatus, generateEvaluation]);
+  }, [battle?.messages.length, battle?.mode, battle?.status, isWaitingForAI, isTypingAI, typingCompleteMessageId, simulateAIResponse, setBattleStatus, generateEvaluation]);
+
+  // Check for battle end after typing completes (Human vs AI mode)
+  useEffect(() => {
+    if (!battle || battle.mode !== "human_vs_ai" || battle.status !== "active") return;
+    if (isTypingAI || isWaitingForAI) return;
+    
+    if (checkBattleEnd()) {
+      setBattleStatus("evaluating");
+      generateEvaluation();
+    }
+  }, [battle, isTypingAI, isWaitingForAI, checkBattleEnd, setBattleStatus, generateEvaluation]);
 
   const saveBattleTrainingData = useCallback(async (feedback: HumanFeedback) => {
     if (!battle || !evaluation) return;
@@ -487,10 +503,12 @@ const Battle = () => {
               </div>
             )}
             
-            {battle.messages.map((message) => {
+            {battle.messages.map((message, index) => {
               const isParticipantA = message.participantId === participantA.id;
               const participant = isParticipantA ? participantA : participantB;
               const personality = PERSONALITIES.find((p) => p.id === participant.personalityId);
+              const isLatestMessage = index === battle.messages.length - 1;
+              const isAIMessage = battle.mode === "ai_vs_ai" || (battle.mode === "human_vs_ai" && !isParticipantA);
               
               return (
                 <ChatBubble
@@ -499,6 +517,8 @@ const Battle = () => {
                   isUser={isParticipantA && battle.mode === "human_vs_ai"}
                   participantName={personality?.name || participant.name}
                   timestamp={message.timestamp}
+                  enableTyping={isAIMessage && isLatestMessage}
+                  onTypingComplete={() => handleTypingComplete(message.id)}
                 />
               );
             })}
@@ -565,7 +585,7 @@ const Battle = () => {
             <div className="flex-1 lg:flex-none p-4 rounded-xl border border-border bg-card">
               <BattleTimer
                 initialSeconds={battle.timeLimit}
-                isActive={battle.status === "active" && !isWaitingForAI}
+                isActive={battle.status === "active" && !isWaitingForAI && !isTypingAI}
                 onTimeUp={handleTimeUp}
               />
             </div>
