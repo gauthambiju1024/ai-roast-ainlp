@@ -143,7 +143,7 @@ const Battle = () => {
     }
   }, [battle, setBattleStatus, generateEvaluation]);
 
-  const callLyzrAPI = useCallback(async (participantId: string, personalityId: string, contextMessage?: string) => {
+  const callLyzrAPI = useCallback(async (participantId: string, personalityId: string, contextMessage?: string, humanMessage?: string) => {
     if (!battle) return;
     
     const { sessionUserId } = useBattleStore.getState();
@@ -160,8 +160,8 @@ const Battle = () => {
       return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
     }
     
-    // Use contextMessage if provided, otherwise use last message
-    const messageToSend = contextMessage || (battle.messages.length > 0 
+    // Priority: contextMessage > humanMessage > last message from state
+    const messageToSend = contextMessage || humanMessage || (battle.messages.length > 0 
       ? battle.messages[battle.messages.length - 1].content 
       : "Start the roast battle!");
     
@@ -191,11 +191,11 @@ const Battle = () => {
     }
   }, [battle]);
 
-  const simulateAIResponse = useCallback(async (participantId: string, personalityId?: string, contextMessage?: string) => {
+  const simulateAIResponse = useCallback(async (participantId: string, personalityId?: string, contextMessage?: string, humanMessage?: string) => {
     setIsWaitingForAI(true);
     
     try {
-      const response = await callLyzrAPI(participantId, personalityId || "trump", contextMessage);
+      const response = await callLyzrAPI(participantId, personalityId || "trump", contextMessage, humanMessage);
       addMessage(participantId, response);
     } catch (err) {
       console.error("AI response error:", err);
@@ -233,12 +233,13 @@ const Battle = () => {
     }
     
     if (aMessages < BATTLE_CONFIG.maxMessagesPerParticipant) {
-      simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextMessage);
+      // Pass content explicitly as humanMessage for subsequent messages
+      simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextMessage, content);
     } else {
       // Let AI respond one more time if needed
       const bMessages = battle.messages.filter((m) => m.participantId === battle.participantB.id).length;
       if (bMessages < BATTLE_CONFIG.maxMessagesPerParticipant) {
-        simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextMessage);
+        simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextMessage, content);
       } else {
         setBattleStatus("evaluating");
         generateEvaluation();
