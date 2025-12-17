@@ -17,6 +17,7 @@ import { toast } from "sonner";
 const Battle = () => {
   const navigate = useNavigate();
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const aiTurnInProgress = useRef(false); // Guard against double execution
   
   const { battle, evaluation, addMessage, setBattleStatus, setEvaluation, setHumanFeedback, resetBattle } = useBattleStore();
   
@@ -235,25 +236,42 @@ const Battle = () => {
   // AI vs AI auto-battle with opponent context injection
   useEffect(() => {
     if (!battle || battle.mode !== "ai_vs_ai" || battle.status !== "active") return;
+    if (aiTurnInProgress.current || isWaitingForAI) return; // Guard against double execution
     
     const totalMessages = battle.messages.length;
     const opponentAId = battle.participantA.personalityId || "";
     const opponentBId = battle.participantB.personalityId || "";
     
+    // Check if battle should end
+    const aMessages = battle.messages.filter((m) => m.participantId === battle.participantA.id).length;
+    const bMessages = battle.messages.filter((m) => m.participantId === battle.participantB.id).length;
+    
+    if (aMessages >= BATTLE_CONFIG.maxMessagesPerParticipant && 
+        bMessages >= BATTLE_CONFIG.maxMessagesPerParticipant) {
+      // Battle complete - trigger evaluation
+      setBattleStatus("evaluating");
+      generateEvaluation();
+      return;
+    }
+    
     if (totalMessages === 0) {
       // Participant A's FIRST message - inject opponent B's context
+      aiTurnInProgress.current = true;
       const contextForA = `${PERSONALITY_DESCRIPTIONS[opponentBId] || ""}\n\nThe roast battle has begun. Fire your opening roast!`;
       setTimeout(() => {
         simulateAIResponse(battle.participantA.id, battle.participantA.personalityId, contextForA);
+        aiTurnInProgress.current = false;
       }, 1000);
-    } else if (totalMessages === 1 && !isWaitingForAI) {
+    } else if (totalMessages === 1) {
       // Participant B's FIRST message - inject opponent A's context + A's roast
+      aiTurnInProgress.current = true;
       const aFirstRoast = battle.messages[0].content;
       const contextForB = `${PERSONALITY_DESCRIPTIONS[opponentAId] || ""}\n\nThey just roasted you with: "${aFirstRoast}"\n\nFire back!`;
       setTimeout(() => {
         simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextForB);
+        aiTurnInProgress.current = false;
       }, 2000);
-    } else if (!isWaitingForAI && !checkBattleEnd()) {
+    } else {
       // Subsequent messages - normal flow (agents have context in memory)
       const lastMessage = battle.messages[battle.messages.length - 1];
       const nextParticipant = lastMessage.participantId === battle.participantA.id 
@@ -263,12 +281,14 @@ const Battle = () => {
       const nextMessages = battle.messages.filter((m) => m.participantId === nextParticipant.id).length;
       
       if (nextMessages < BATTLE_CONFIG.maxMessagesPerParticipant) {
+        aiTurnInProgress.current = true;
         setTimeout(() => {
           simulateAIResponse(nextParticipant.id, nextParticipant.personalityId);
+          aiTurnInProgress.current = false;
         }, 2000);
       }
     }
-  }, [battle, isWaitingForAI, simulateAIResponse, checkBattleEnd]);
+  }, [battle?.messages.length, battle?.mode, battle?.status, isWaitingForAI, simulateAIResponse, setBattleStatus, generateEvaluation]);
 
   const handleFeedbackSubmit = (feedback: HumanFeedback) => {
     setHumanFeedback(feedback);
@@ -415,13 +435,16 @@ const Battle = () => {
 
         {/* Sidebar */}
         <div className="lg:w-64 flex flex-row lg:flex-col gap-4">
-          <div className="flex-1 lg:flex-none p-4 rounded-xl border border-border bg-card">
-            <BattleTimer
-              initialSeconds={battle.timeLimit}
-              isActive={battle.status === "active"}
-              onTimeUp={handleTimeUp}
-            />
-          </div>
+          {/* Timer - only show for human vs AI */}
+          {battle.mode === "human_vs_ai" && (
+            <div className="flex-1 lg:flex-none p-4 rounded-xl border border-border bg-card">
+              <BattleTimer
+                initialSeconds={battle.timeLimit}
+                isActive={battle.status === "active"}
+                onTimeUp={handleTimeUp}
+              />
+            </div>
+          )}
           
           <div className="flex-1 lg:flex-none p-4 rounded-xl border border-border bg-card">
             <MessageCounter
