@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScoreCard } from "./ScoreCard";
 import { FeedbackForm } from "./FeedbackForm";
 import { TranscriptViewer } from "./TranscriptViewer";
@@ -41,12 +41,15 @@ export const EvaluationModal = ({
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && feedbackSubmitted && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
             <span className="text-gradient-fire">Battle Complete!</span>
           </DialogTitle>
+          <DialogDescription className="text-center text-muted-foreground">
+            See the scores, AI verdict, and submit your vote
+          </DialogDescription>
         </DialogHeader>
 
         {/* Tabs */}
