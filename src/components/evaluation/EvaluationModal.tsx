@@ -42,7 +42,7 @@ export const EvaluationModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <DialogContent className="w-[calc(100vw-1.5rem)] max-w-2xl max-h-[calc(100vh-1.5rem)] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
             <span className="text-gradient-fire">Battle Complete!</span>
