@@ -2,3 +2,6 @@ project_id = "ynleaezkscwuukinbwmv"
 
 [functions.evaluate-battle]
 verify_jwt = false
+
+[functions.lyzr-chat]
+verify_jwt = false

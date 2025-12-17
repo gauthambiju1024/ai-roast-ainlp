@@ -9,6 +9,7 @@ import { MessageCounter } from "@/components/battle/MessageCounter";
 import { EvaluationModal } from "@/components/evaluation/EvaluationModal";
 import { DevPanel } from "@/components/evaluation/DevPanel";
 import { PERSONALITIES, BATTLE_CONFIG } from "@/config/battleConfig";
+import { getLyzrAgent } from "@/config/lyzrAgents";
 import { HumanFeedback, EvaluationResult } from "@/types/battle";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -141,30 +142,73 @@ const Battle = () => {
     }
   }, [battle, setBattleStatus, generateEvaluation]);
 
-  const simulateAIResponse = useCallback((participantId: string, personalityId?: string) => {
+  const callLyzrAPI = useCallback(async (participantId: string, personalityId: string) => {
+    if (!battle) return;
+    
+    const { sessionUserId } = useBattleStore.getState();
+    const agent = getLyzrAgent(personalityId, battle.intensity);
+    
+    if (!agent) {
+      console.error(`No Lyzr agent configured for ${personalityId}_${battle.intensity}`);
+      // Fallback to mock response
+      const fallbackResponses = [
+        "Oh, that's cute. Did you practice that in the mirror?",
+        "I've seen better comebacks in a clearance bin.",
+        "Is that the best you've got? Try again.",
+      ];
+      return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+    }
+    
+    // Build context from previous messages
+    const lastUserMessage = battle.messages.length > 0 
+      ? battle.messages[battle.messages.length - 1].content 
+      : "Start the roast battle!";
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('lyzr-chat', {
+        body: {
+          personality_id: personalityId,
+          intensity_id: battle.intensity,
+          user_id: sessionUserId,
+          session_id: battle.id,
+          message: lastUserMessage,
+        }
+      });
+      
+      if (error) {
+        console.error("Lyzr API error:", error);
+        throw error;
+      }
+      
+      // Extract response text from Lyzr API response
+      const responseText = data?.response || data?.message || data?.text || "Nice try, but I've got nothing for that one.";
+      return responseText;
+    } catch (err) {
+      console.error("Failed to call Lyzr API:", err);
+      toast.error("AI response failed, using fallback");
+      return "Hmm, let me think of something better... Your last roast left me speechless!";
+    }
+  }, [battle]);
+
+  const simulateAIResponse = useCallback(async (participantId: string, personalityId?: string) => {
     setIsWaitingForAI(true);
     
-    // Mock AI response - in production this would call Lyzr API
-    const mockResponses = [
-      "Oh, that's cute. Did you practice that in the mirror, or did it just come naturally like your bad decisions?",
-      "I've seen better comebacks in a clearance bin. Try again, champ.",
-      "Is that the best you've got? My error messages have more personality.",
-      "Fascinating. I'll add that to my collection of things not worth remembering.",
-      "You call that a roast? I've had warmer ice cubes.",
-    ];
-
-    setTimeout(() => {
-      const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+    try {
+      const response = await callLyzrAPI(participantId, personalityId || "trump");
       addMessage(participantId, response);
+    } catch (err) {
+      console.error("AI response error:", err);
+      addMessage(participantId, "I'm at a loss for words... you win this round!");
+    } finally {
       setIsWaitingForAI(false);
-
+      
       // Check if battle should end
       if (checkBattleEnd()) {
         setBattleStatus("evaluating");
         generateEvaluation();
       }
-    }, 1500 + Math.random() * 1000);
-  }, [addMessage, checkBattleEnd, setBattleStatus, generateEvaluation]);
+    }
+  }, [callLyzrAPI, addMessage, checkBattleEnd, setBattleStatus, generateEvaluation]);
 
   const handleSendMessage = (content: string) => {
     if (!battle || battle.status !== "active") return;
