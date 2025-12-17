@@ -42,7 +42,7 @@ export const EvaluationModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[calc(100vw-1.5rem)] max-w-2xl max-h-[calc(100vh-1.5rem)] overflow-y-auto bg-card border-border">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl max-h-[85vh] m-4 overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
             <span className="text-gradient-fire">Battle Complete!</span>
@@ -72,7 +72,7 @@ export const EvaluationModal = ({
         </div>
 
         {/* Tab Content */}
-        <div className="min-h-[300px]">
+        <div className="min-h-[200px]">
           {activeTab === "scores" && evaluation && (
             <div className="grid md:grid-cols-2 gap-4">
               <ScoreCard
