@@ -120,6 +120,16 @@ export const getApiKey = (personalityId: string, intensityId: string): string =>
   return API_KEY_MAP[key] || "";
 };
 
+// Personality descriptions for AI vs AI context injection
+export const PERSONALITY_DESCRIPTIONS: Record<string, string> = {
+  trump: "You're up against Donald Trump — U.S. President, billionaire real-estate mogul, and reality-TV personality. Known for bold rhetoric, relentless self-promotion, and turning confidence into spectacle.",
+  gandhi: "You're facing Mahatma Gandhi — leader of India's independence movement and global symbol of nonviolent resistance. Recognized for moral authority, disciplined simplicity, and quiet but enduring influence.",
+  genz: "You're battling a Gen Z persona — shaped by social media, meme culture, and internet-native communication. Known for sarcasm, irony, and blunt commentary delivered with casual detachment.",
+  messi: "You're up against Lionel Messi — World Cup winner, multiple-time Ballon d'Or recipient, and football legend. Renowned for consistency, humility, and dominance through skill rather than words.",
+  amitabh: "You're facing Amitabh Bachchan — one of Indian cinema's most influential actors with a career spanning decades. Known for commanding screen presence, deep voice, and iconic dramatic performances.",
+  hawking: "You're battling Stephen Hawking — theoretical physicist and bestselling author in cosmology. Famous for explaining complex ideas with clarity, dry humor, and intellectual precision.",
+};
+
 export const BATTLE_CONFIG = {
   maxMessagesPerParticipant: 5,
   defaultTimeLimit: 60,
