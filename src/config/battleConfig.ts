@@ -136,3 +136,37 @@ export const BATTLE_CONFIG = {
   minMessageLength: 1,
   maxMessageLength: 500,
 };
+
+// Human vibe presets for roast context
+export interface HumanVibe {
+  id: string;
+  label: string;
+  emoji: string;
+}
+
+export const HUMAN_VIBES: HumanVibe[] = [
+  { id: "tech_bro", label: "Tech Bro", emoji: "💻" },
+  { id: "gym_rat", label: "Gym Rat", emoji: "💪" },
+  { id: "gamer", label: "Gamer", emoji: "🎮" },
+  { id: "foodie", label: "Foodie", emoji: "🍕" },
+  { id: "overthinker", label: "Overthinker", emoji: "🤔" },
+  { id: "night_owl", label: "Night Owl", emoji: "🦉" },
+  { id: "introvert", label: "Introvert", emoji: "🏠" },
+  { id: "main_character", label: "Main Character", emoji: "✨" },
+  { id: "procrastinator", label: "Procrastinator", emoji: "⏰" },
+  { id: "coffee_addict", label: "Coffee Addict", emoji: "☕" },
+  { id: "sports_fan", label: "Sports Fan", emoji: "⚽" },
+  { id: "film_buff", label: "Film Buff", emoji: "🎬" },
+  { id: "music_lover", label: "Music Lover", emoji: "🎵" },
+  { id: "bookworm", label: "Bookworm", emoji: "📚" },
+  { id: "pet_parent", label: "Pet Parent", emoji: "🐕" },
+  { id: "travel_junkie", label: "Travel Junkie", emoji: "✈️" },
+  { id: "crypto_bro", label: "Crypto Bro", emoji: "🪙" },
+  { id: "fitness_influencer", label: "Fitness Influencer", emoji: "🏋️" },
+  { id: "startup_founder", label: "Startup Founder", emoji: "🚀" },
+  { id: "corporate_slave", label: "Corporate Slave", emoji: "👔" },
+  { id: "student", label: "Student", emoji: "🎓" },
+  { id: "artist", label: "Artist", emoji: "🎨" },
+  { id: "social_media_addict", label: "Social Media Addict", emoji: "📱" },
+  { id: "meme_lord", label: "Meme Lord", emoji: "😂" },
+];

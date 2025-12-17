@@ -219,13 +219,26 @@ const Battle = () => {
     // Check if this was the last message
     const aMessages = battle.messages.filter((m) => m.participantId === battle.participantA.id).length + 1;
     
+    // Build context for AI on human's first message
+    let contextMessage: string | undefined;
+    if (battle.messages.length === 0 && battle.participantA.humanProfile) {
+      const profile = battle.participantA.humanProfile;
+      const vibesText = profile.vibes.length > 0 ? profile.vibes.join(", ") : "";
+      const descText = profile.customDescription ? ` ${profile.customDescription}` : "";
+      
+      contextMessage = `You're roasting ${profile.nickname}`;
+      if (vibesText) contextMessage += ` — a ${vibesText}`;
+      if (descText) contextMessage += `.${descText}`;
+      contextMessage += `.\n\nThey just roasted you with: "${content}"\n\nFire back!`;
+    }
+    
     if (aMessages < BATTLE_CONFIG.maxMessagesPerParticipant) {
-      simulateAIResponse(battle.participantB.id, battle.participantB.personalityId);
+      simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextMessage);
     } else {
       // Let AI respond one more time if needed
       const bMessages = battle.messages.filter((m) => m.participantId === battle.participantB.id).length;
       if (bMessages < BATTLE_CONFIG.maxMessagesPerParticipant) {
-        simulateAIResponse(battle.participantB.id, battle.participantB.personalityId);
+        simulateAIResponse(battle.participantB.id, battle.participantB.personalityId, contextMessage);
       } else {
         setBattleStatus("evaluating");
         generateEvaluation();

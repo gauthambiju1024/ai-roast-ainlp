@@ -1,10 +1,17 @@
 export type BattleMode = "human_vs_ai" | "ai_vs_ai";
 
+export interface HumanProfile {
+  nickname: string;
+  vibes: string[];
+  customDescription?: string;
+}
+
 export interface BattleParticipant {
   id: string;
   name: string;
   type: "human" | "ai";
   personalityId?: string;
+  humanProfile?: HumanProfile;
 }
 
 export interface ChatMessage {
