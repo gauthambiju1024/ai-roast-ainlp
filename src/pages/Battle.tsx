@@ -219,17 +219,19 @@ const Battle = () => {
     // Check if this was the last message
     const aMessages = battle.messages.filter((m) => m.participantId === battle.participantA.id).length + 1;
     
-    // Build context for AI on human's first message
+    // Build context for AI on human's first message - emphasize the roast over the profile
     let contextMessage: string | undefined;
     if (battle.messages.length === 0 && battle.participantA.humanProfile) {
       const profile = battle.participantA.humanProfile;
       const vibesText = profile.vibes.length > 0 ? profile.vibes.join(", ") : "";
       const descText = profile.customDescription ? ` ${profile.customDescription}` : "";
       
-      contextMessage = `You're roasting ${profile.nickname}`;
-      if (vibesText) contextMessage += ` — a ${vibesText}`;
-      if (descText) contextMessage += `.${descText}`;
-      contextMessage += `.\n\nThey just roasted you with: "${content}"\n\nFire back!`;
+      // Build a brief context but EMPHASIZE the actual roast they sent
+      let profileContext = `Opponent: ${profile.nickname}`;
+      if (vibesText) profileContext += ` (${vibesText})`;
+      if (descText) profileContext += `.${descText}`;
+      
+      contextMessage = `${profileContext}\n\nThey just roasted you: "${content}"\n\nRespond with a brutal roast that directly addresses what they said!`;
     }
     
     if (aMessages < BATTLE_CONFIG.maxMessagesPerParticipant) {
@@ -286,7 +288,7 @@ const Battle = () => {
         aiTurnInProgress.current = false;
       }, 2000);
     } else {
-      // Subsequent messages - normal flow (agents have context in memory)
+      // Subsequent messages - pass the opponent's last message explicitly
       const lastMessage = battle.messages[battle.messages.length - 1];
       const nextParticipant = lastMessage.participantId === battle.participantA.id 
         ? battle.participantB 
@@ -296,8 +298,10 @@ const Battle = () => {
       
       if (nextMessages < BATTLE_CONFIG.maxMessagesPerParticipant) {
         aiTurnInProgress.current = true;
+        // Pass the opponent's roast explicitly as humanMessage
+        const opponentRoast = lastMessage.content;
         setTimeout(() => {
-          simulateAIResponse(nextParticipant.id, nextParticipant.personalityId);
+          simulateAIResponse(nextParticipant.id, nextParticipant.personalityId, undefined, opponentRoast);
           aiTurnInProgress.current = false;
         }, 2000);
       }
