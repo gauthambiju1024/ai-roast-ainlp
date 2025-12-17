@@ -13,7 +13,6 @@ const SetupHumanVsAI = () => {
   const initBattle = useBattleStore((state) => state.initBattle);
   
   // Human profile state
-  const [nickname, setNickname] = useState("");
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   const [customDescription, setCustomDescription] = useState("");
   const [customVibe, setCustomVibe] = useState("");
@@ -59,7 +58,6 @@ const SetupHumanVsAI = () => {
       intensity: selectedIntensity,
       timeLimit: timeConfig?.seconds || 60,
       humanProfile: {
-        nickname: nickname.trim(),
         vibes: vibeLabels,
         customDescription: customDescription.trim() || undefined,
       },
@@ -68,7 +66,7 @@ const SetupHumanVsAI = () => {
     navigate("/battle");
   };
 
-  const isValid = selectedPersonality !== "" && nickname.trim().length >= 2;
+  const isValid = selectedPersonality !== "";
 
   // Get custom vibes (vibes not in HUMAN_VIBES)
   const customVibes = selectedVibes.filter(
@@ -95,23 +93,6 @@ const SetupHumanVsAI = () => {
           <p className="text-muted-foreground mb-6">
             Give the AI something to roast!
           </p>
-
-          {/* Nickname Input */}
-          <div className="space-y-2 mb-6">
-            <label className="text-sm font-medium text-foreground">
-              Your Nickname <span className="text-destructive">*</span>
-            </label>
-            <Input
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              placeholder="Enter your battle name..."
-              maxLength={30}
-              className="bg-background/50"
-            />
-            {nickname.length > 0 && nickname.trim().length < 2 && (
-              <p className="text-xs text-destructive">Nickname must be at least 2 characters</p>
-            )}
-          </div>
 
           {/* Vibe Chips */}
           <div className="space-y-3 mb-6">

@@ -1,7 +1,7 @@
 export type BattleMode = "human_vs_ai" | "ai_vs_ai";
 
 export interface HumanProfile {
-  nickname: string;
+  nickname?: string;
   vibes: string[];
   customDescription?: string;
 }
