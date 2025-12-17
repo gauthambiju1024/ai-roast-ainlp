@@ -1,1 +1,4 @@
 project_id = "ynleaezkscwuukinbwmv"
+
+[functions.evaluate-battle]
+verify_jwt = false
