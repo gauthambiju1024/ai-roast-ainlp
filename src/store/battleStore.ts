@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { BattleState, BattleMode, ChatMessage, EvaluationResult, HumanFeedback } from '@/types/battle';
+import { BattleState, BattleMode, ChatMessage, EvaluationResult, HumanFeedback, HumanProfile } from '@/types/battle';
 import { v4 as uuidv4 } from 'uuid';
 
 interface BattleStore {
@@ -18,6 +18,7 @@ interface BattleStore {
     participantBPersonality: string;
     intensity: string;
     timeLimit: number;
+    humanProfile?: HumanProfile;
   }) => void;
   
   addMessage: (participantId: string, content: string) => void;
@@ -47,7 +48,7 @@ export const useBattleStore = create<BattleStore>((set, get) => ({
         id: uuidv4(),
         mode: config.mode,
         participantA: config.mode === 'human_vs_ai' 
-          ? { id: 'human', name: 'You', type: 'human' }
+          ? { id: 'human', name: config.humanProfile?.nickname || 'You', type: 'human', humanProfile: config.humanProfile }
           : { id: 'ai_a', name: config.participantAPersonality || 'AI A', type: 'ai', personalityId: config.participantAPersonality },
         participantB: {
           id: 'ai_b',
