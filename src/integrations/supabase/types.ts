@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_evaluation: {
+        Row: {
+          agent_participant: string
+          agent_personality: string
+          battle_id: string
+          created_at: string | null
+          ethical_violation: boolean
+          fun_factor: number
+          id: string
+          intensity: Database["public"]["Enums"]["intensity_level"]
+          mode: Database["public"]["Enums"]["battle_mode"]
+          originality: number
+          persona_match: number
+          relevance: number
+          session_id: string
+        }
+        Insert: {
+          agent_participant: string
+          agent_personality: string
+          battle_id: string
+          created_at?: string | null
+          ethical_violation: boolean
+          fun_factor: number
+          id?: string
+          intensity: Database["public"]["Enums"]["intensity_level"]
+          mode: Database["public"]["Enums"]["battle_mode"]
+          originality: number
+          persona_match: number
+          relevance: number
+          session_id: string
+        }
+        Update: {
+          agent_participant?: string
+          agent_personality?: string
+          battle_id?: string
+          created_at?: string | null
+          ethical_violation?: boolean
+          fun_factor?: number
+          id?: string
+          intensity?: Database["public"]["Enums"]["intensity_level"]
+          mode?: Database["public"]["Enums"]["battle_mode"]
+          originality?: number
+          persona_match?: number
+          relevance?: number
+          session_id?: string
+        }
+        Relationships: []
+      }
       battle_training_data: {
         Row: {
           a_humor: number | null
