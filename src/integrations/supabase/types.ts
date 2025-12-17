@@ -14,7 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      battle_training_data: {
+        Row: {
+          a_humor: number | null
+          a_originality: number | null
+          a_punch: number | null
+          a_relevance: number | null
+          a_text: string
+          agent_a_personality: string | null
+          agent_b_personality: string | null
+          b_humor: number | null
+          b_originality: number | null
+          b_punch: number | null
+          b_relevance: number | null
+          b_text: string
+          battle_id: string
+          created_at: string | null
+          human_a_humor: number | null
+          human_a_originality: number | null
+          human_a_punch: number | null
+          human_a_relevance: number | null
+          human_b_humor: number | null
+          human_b_originality: number | null
+          human_b_punch: number | null
+          human_b_relevance: number | null
+          human_feedback_text: string | null
+          human_overall_a: number | null
+          human_overall_b: number | null
+          intensity: Database["public"]["Enums"]["intensity_level"]
+          margin: number | null
+          message_limit: number
+          mode: Database["public"]["Enums"]["battle_mode"]
+          overall_a: number | null
+          overall_b: number | null
+          session_id: string
+          thread_text: string
+          time_limit_seconds: number
+          winner: Database["public"]["Enums"]["battle_winner"] | null
+        }
+        Insert: {
+          a_humor?: number | null
+          a_originality?: number | null
+          a_punch?: number | null
+          a_relevance?: number | null
+          a_text: string
+          agent_a_personality?: string | null
+          agent_b_personality?: string | null
+          b_humor?: number | null
+          b_originality?: number | null
+          b_punch?: number | null
+          b_relevance?: number | null
+          b_text: string
+          battle_id?: string
+          created_at?: string | null
+          human_a_humor?: number | null
+          human_a_originality?: number | null
+          human_a_punch?: number | null
+          human_a_relevance?: number | null
+          human_b_humor?: number | null
+          human_b_originality?: number | null
+          human_b_punch?: number | null
+          human_b_relevance?: number | null
+          human_feedback_text?: string | null
+          human_overall_a?: number | null
+          human_overall_b?: number | null
+          intensity: Database["public"]["Enums"]["intensity_level"]
+          margin?: number | null
+          message_limit: number
+          mode: Database["public"]["Enums"]["battle_mode"]
+          overall_a?: number | null
+          overall_b?: number | null
+          session_id: string
+          thread_text: string
+          time_limit_seconds: number
+          winner?: Database["public"]["Enums"]["battle_winner"] | null
+        }
+        Update: {
+          a_humor?: number | null
+          a_originality?: number | null
+          a_punch?: number | null
+          a_relevance?: number | null
+          a_text?: string
+          agent_a_personality?: string | null
+          agent_b_personality?: string | null
+          b_humor?: number | null
+          b_originality?: number | null
+          b_punch?: number | null
+          b_relevance?: number | null
+          b_text?: string
+          battle_id?: string
+          created_at?: string | null
+          human_a_humor?: number | null
+          human_a_originality?: number | null
+          human_a_punch?: number | null
+          human_a_relevance?: number | null
+          human_b_humor?: number | null
+          human_b_originality?: number | null
+          human_b_punch?: number | null
+          human_b_relevance?: number | null
+          human_feedback_text?: string | null
+          human_overall_a?: number | null
+          human_overall_b?: number | null
+          intensity?: Database["public"]["Enums"]["intensity_level"]
+          margin?: number | null
+          message_limit?: number
+          mode?: Database["public"]["Enums"]["battle_mode"]
+          overall_a?: number | null
+          overall_b?: number | null
+          session_id?: string
+          thread_text?: string
+          time_limit_seconds?: number
+          winner?: Database["public"]["Enums"]["battle_winner"] | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +136,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      battle_mode: "human_vs_ai" | "ai_vs_ai"
+      battle_winner: "A" | "B" | "TIE"
+      intensity_level: "mild" | "spicy"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +265,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      battle_mode: ["human_vs_ai", "ai_vs_ai"],
+      battle_winner: ["A", "B", "TIE"],
+      intensity_level: ["mild", "spicy"],
+    },
   },
 } as const
