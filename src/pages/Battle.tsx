@@ -69,10 +69,18 @@ const Battle = () => {
   const generateEvaluation = useCallback(async (threadText?: string) => {
     if (!battle) return;
     
+    const thread_text = threadText || buildThreadText();
+    
+    // Don't call API with empty thread_text
+    if (!thread_text || thread_text.trim() === "") {
+      console.warn("Cannot evaluate: no messages in battle");
+      setEvalError("No messages to evaluate");
+      return;
+    }
+    
     setIsEvaluating(true);
     setEvalError(null);
-    
-    const thread_text = threadText || buildThreadText();
+    setLastThreadText(thread_text);
     setLastThreadText(thread_text);
     
     const payload = { thread_text };
