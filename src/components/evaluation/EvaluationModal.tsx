@@ -4,9 +4,8 @@ import { ScoreCard } from "./ScoreCard";
 import { FeedbackForm } from "./FeedbackForm";
 import { TranscriptViewer } from "./TranscriptViewer";
 import { AgentEvaluationForm } from "./AgentEvaluationForm";
-import { EvaluationResult, HumanFeedback, AgentEvaluation, AgentEvaluationScores, BattleMode } from "@/types/battle";
-import { MessageSquare, Brain, User, Bot, Sparkles, Target } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { EvaluationResult, HumanFeedback, AgentEvaluation, BattleMode } from "@/types/battle";
+import { MessageSquare, Brain, User, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EvaluationModalProps {
@@ -39,39 +38,15 @@ export const EvaluationModal = ({
   const [activeTab, setActiveTab] = useState<TabType>("scores");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [agentFeedbackSubmitted, setAgentFeedbackSubmitted] = useState(false);
-  const [agentScores, setAgentScores] = useState<{ agentA: AgentEvaluationScores; agentB?: AgentEvaluationScores } | null>(null);
-  const [humanFeedback, setHumanFeedback] = useState<HumanFeedback | null>(null);
 
-  const handleAgentScoresChange = (agentAScores: AgentEvaluationScores, agentBScores?: AgentEvaluationScores) => {
-    setAgentScores({ agentA: agentAScores, agentB: agentBScores });
-  };
-
-  const handleAgentSubmit = () => {
-    if (!agentScores) return;
-    const evaluations: AgentEvaluation[] = [{
-      participantId: mode === "human_vs_ai" ? "B" : "A",
-      personality: agentAPersonalityForEval || "",
-      scores: agentScores.agentA
-    }];
-    if (mode === "ai_vs_ai" && agentScores.agentB && participantBPersonality) {
-      evaluations.push({
-        participantId: "B",
-        personality: participantBPersonality,
-        scores: agentScores.agentB
-      });
-    }
+  const handleAgentFeedbackSubmit = (evaluations: AgentEvaluation[]) => {
     onAgentEvaluationSubmit(evaluations);
     setAgentFeedbackSubmitted(true);
     setActiveTab("feedback");
   };
 
-  const handleHumanFeedbackChange = (feedback: HumanFeedback) => {
-    setHumanFeedback(feedback);
-  };
-
-  const handleHumanFeedbackSubmit = () => {
-    if (!humanFeedback) return;
-    onFeedbackSubmit(humanFeedback);
+  const handleFeedbackSubmit = (feedback: HumanFeedback) => {
+    onFeedbackSubmit(feedback);
     setFeedbackSubmitted(true);
   };
 
@@ -159,21 +134,14 @@ export const EvaluationModal = ({
                 <p className="text-muted-foreground text-center">Now rate the roast quality in "Your Vote" tab.</p>
               </div>
             ) : (
-              <div className="space-y-6">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  <h3 className="text-base font-semibold text-foreground">Help us improve our AI personalities</h3>
-                </div>
-                <AgentEvaluationForm
-                  mode={mode}
-                  agentAName={agentANameForEval}
-                  agentAPersonality={agentAPersonalityForEval || ""}
-                  agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
-                  agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
-                  onScoresChange={handleAgentScoresChange}
-                />
-                <Button onClick={handleAgentSubmit} className="w-full">Submit Agent Rating</Button>
-              </div>
+              <AgentEvaluationForm
+                mode={mode}
+                agentAName={agentANameForEval}
+                agentAPersonality={agentAPersonalityForEval || ""}
+                agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
+                agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
+                onSubmit={handleAgentFeedbackSubmit}
+              />
             ))}
 
           {activeTab === "llm" && (
@@ -205,18 +173,11 @@ export const EvaluationModal = ({
                 </button>
               </div>
             ) : (
-              <div className="space-y-6">
-                <div className="flex items-center gap-2">
-                  <Target className="w-5 h-5 text-primary" />
-                  <h3 className="text-base font-semibold text-foreground">Help us train model to evaluate better</h3>
-                </div>
-                <FeedbackForm
-                  participantAName={participantAName}
-                  participantBName={participantBName}
-                  onScoresChange={handleHumanFeedbackChange}
-                />
-                <Button onClick={handleHumanFeedbackSubmit} className="w-full">Submit Your Vote</Button>
-              </div>
+              <FeedbackForm
+                participantAName={participantAName}
+                participantBName={participantBName}
+                onSubmit={handleFeedbackSubmit}
+              />
             ))}
         </div>
       </DialogContent>
