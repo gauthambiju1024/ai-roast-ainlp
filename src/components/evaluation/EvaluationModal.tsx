@@ -285,7 +285,7 @@ export const EvaluationModal = ({
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <User className="w-5 h-5 text-primary" />
-                      <span className="font-semibold text-foreground">Give Your Own Evaluation Scores</span>
+                      <span className="font-semibold text-foreground">Your Vote</span>
                     </div>
                     <FeedbackForm
                       participantAName={participantAName}
