@@ -267,27 +267,32 @@ export const EvaluationModal = ({
                 </div>
               ) : (
                 <>
-                  {/* Help text */}
-                  <p className="text-sm text-muted-foreground text-center">
-                    Help us improve our AI personalities & help train our model to evaluate better
-                  </p>
+                  {/* Agent Rating Section */}
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Help us improve our AI personalities
+                    </p>
+                    <AgentEvaluationForm
+                      mode={mode}
+                      agentAName={agentANameForEval}
+                      agentAPersonality={agentAPersonalityForEval || ""}
+                      agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
+                      agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
+                      onScoresChange={handleAgentScoresChange}
+                    />
+                  </div>
 
-                  {/* Agent Rating Section - no subheading */}
-                  <AgentEvaluationForm
-                    mode={mode}
-                    agentAName={agentANameForEval}
-                    agentAPersonality={agentAPersonalityForEval || ""}
-                    agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
-                    agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
-                    onScoresChange={handleAgentScoresChange}
-                  />
-
-                  {/* Feedback Section - no subheading */}
-                  <FeedbackForm
-                    participantAName={participantAName}
-                    participantBName={participantBName}
-                    onScoresChange={handleFeedbackScoresChange}
-                  />
+                  {/* Feedback Section */}
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Help us train model to evaluate better
+                    </p>
+                    <FeedbackForm
+                      participantAName={participantAName}
+                      participantBName={participantBName}
+                      onScoresChange={handleFeedbackScoresChange}
+                    />
+                  </div>
 
                   {/* Single Submit Button */}
                   <button 
