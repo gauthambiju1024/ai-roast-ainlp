@@ -99,16 +99,16 @@ export const INTENSITIES: Intensity[] = [
 
 export const TIME_LIMITS: TimeLimit[] = [
   {
-    id: "hard",
-    seconds: 30,
-    label: "30 seconds",
-    description: "Hard mode",
-  },
-  {
     id: "standard",
     seconds: 60,
     label: "60 seconds",
     description: "Standard",
+  },
+  {
+    id: "relaxed",
+    seconds: 90,
+    label: "90 seconds",
+    description: "Relaxed",
   },
 ];
 
