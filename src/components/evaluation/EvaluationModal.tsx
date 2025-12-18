@@ -135,16 +135,18 @@ export const EvaluationModal = ({
           ))}
         </div>
 
+        {/* Transcript - shared across tabs, below tabs */}
+        {evaluation?.threadText && (
+          <div className="mb-6">
+            <TranscriptViewer threadText={evaluation.threadText} />
+          </div>
+        )}
+
         {/* Tab Content */}
         <div className="min-h-[200px]">
           {/* Results Tab */}
           {activeTab === "results" && evaluation && (
             <div className="space-y-6">
-              {/* Transcript - moved to top */}
-              {evaluation.threadText && (
-                <TranscriptViewer threadText={evaluation.threadText} />
-              )}
-
               {/* Score Cards */}
               <div className="grid md:grid-cols-2 gap-4">
                 <ScoreCard
@@ -265,11 +267,6 @@ export const EvaluationModal = ({
                 </div>
               ) : (
                 <>
-                  {/* Transcript - moved to top */}
-                  {evaluation?.threadText && (
-                    <TranscriptViewer threadText={evaluation.threadText} />
-                  )}
-
                   {/* Help text */}
                   <p className="text-sm text-muted-foreground text-center">
                     Help us improve our AI personalities & help train our model to evaluate better
