@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScoreCard } from "./ScoreCard";
 import { FeedbackForm } from "./FeedbackForm";
 import { TranscriptViewer } from "./TranscriptViewer";
 import { AgentEvaluationForm } from "./AgentEvaluationForm";
-import { EvaluationResult, HumanFeedback, AgentEvaluation, BattleMode } from "@/types/battle";
+import { EvaluationResult, HumanFeedback, AgentEvaluation, AgentEvaluationScores, BattleMode } from "@/types/battle";
 import { Trophy, Bot, User, Sparkles, Quote, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,15 +37,56 @@ export const EvaluationModal = ({
 }: EvaluationModalProps) => {
   const [activeTab, setActiveTab] = useState<TabType>("results");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
-  const [agentFeedbackSubmitted, setAgentFeedbackSubmitted] = useState(false);
+  
+  // Store current scores from both forms
+  const [agentAScores, setAgentAScores] = useState<AgentEvaluationScores | null>(null);
+  const [agentBScores, setAgentBScores] = useState<AgentEvaluationScores | null>(null);
+  const [humanFeedback, setHumanFeedback] = useState<HumanFeedback | null>(null);
 
-  const handleAgentFeedbackSubmit = (evaluations: AgentEvaluation[]) => {
-    onAgentEvaluationSubmit(evaluations);
-    setAgentFeedbackSubmitted(true);
-  };
+  const handleAgentScoresChange = useCallback((aScores: AgentEvaluationScores, bScores?: AgentEvaluationScores) => {
+    setAgentAScores(aScores);
+    setAgentBScores(bScores || null);
+  }, []);
 
-  const handleFeedbackSubmit = (feedback: HumanFeedback) => {
-    onFeedbackSubmit(feedback);
+  const handleFeedbackScoresChange = useCallback((scores: HumanFeedback) => {
+    setHumanFeedback(scores);
+  }, []);
+
+  const handleSubmitAll = () => {
+    // Submit agent evaluations
+    if (agentAScores) {
+      const evaluations: AgentEvaluation[] = [];
+      
+      // In Human vs AI, only evaluate the AI (participant B)
+      if (mode === "human_vs_ai") {
+        evaluations.push({
+          participantId: "B",
+          personality: participantBPersonality || "",
+          scores: agentAScores
+        });
+      } else {
+        // AI vs AI - evaluate both
+        evaluations.push({
+          participantId: "A",
+          personality: participantAPersonality || "",
+          scores: agentAScores
+        });
+        if (agentBScores && participantBPersonality) {
+          evaluations.push({
+            participantId: "B",
+            personality: participantBPersonality,
+            scores: agentBScores
+          });
+        }
+      }
+      onAgentEvaluationSubmit(evaluations);
+    }
+
+    // Submit human feedback
+    if (humanFeedback) {
+      onFeedbackSubmit(humanFeedback);
+    }
+
     setFeedbackSubmitted(true);
   };
 
@@ -206,68 +247,67 @@ export const EvaluationModal = ({
           {/* Evaluation Tab */}
           {activeTab === "evaluation" && (
             <div className="space-y-6">
-              {/* Agent Rating Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Bot className="w-5 h-5 text-primary" />
-                  <span className="font-semibold text-foreground">Agent Rating</span>
-                </div>
-                {agentFeedbackSubmitted ? (
-                  <div className="flex flex-col items-center justify-center py-8 px-4 rounded-xl border border-border bg-muted/30">
-                    <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-3">
-                      <Bot className="w-6 h-6 text-green-400" />
-                    </div>
-                    <h3 className="text-lg font-bold text-foreground mb-1">Agent Rating Submitted!</h3>
-                    <p className="text-sm text-muted-foreground text-center">
-                      Thank you for rating the AI agent performance.
-                    </p>
+              {feedbackSubmitted ? (
+                <div className="flex flex-col items-center justify-center py-12 px-4 rounded-xl border border-border bg-muted/30">
+                  <div className="w-12 h-12 rounded-full gradient-fire flex items-center justify-center mb-3">
+                    <User className="w-6 h-6 text-primary-foreground" />
                   </div>
-                ) : (
-                  <AgentEvaluationForm
-                    mode={mode}
-                    agentAName={agentANameForEval}
-                    agentAPersonality={agentAPersonalityForEval || ""}
-                    agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
-                    agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
-                    onSubmit={handleAgentFeedbackSubmit}
-                  />
-                )}
-              </div>
-
-              {/* Your Vote Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-primary" />
-                  <span className="font-semibold text-foreground">Your Vote</span>
+                  <h3 className="text-lg font-bold text-foreground mb-1">Evaluation Submitted!</h3>
+                  <p className="text-sm text-muted-foreground text-center mb-4">
+                    Thank you for your feedback. It helps us improve our AI personalities.
+                  </p>
+                  <button
+                    onClick={onClose}
+                    className="px-6 py-2 rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
+                  >
+                    Close Results
+                  </button>
                 </div>
-                {feedbackSubmitted ? (
-                  <div className="flex flex-col items-center justify-center py-8 px-4 rounded-xl border border-border bg-muted/30">
-                    <div className="w-12 h-12 rounded-full gradient-fire flex items-center justify-center mb-3">
-                      <User className="w-6 h-6 text-primary-foreground" />
+              ) : (
+                <>
+                  {/* Agent Rating Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Bot className="w-5 h-5 text-primary" />
+                      <span className="font-semibold text-foreground">Agent Rating</span>
                     </div>
-                    <h3 className="text-lg font-bold text-foreground mb-1">Vote Submitted!</h3>
-                    <p className="text-sm text-muted-foreground text-center mb-4">
-                      Your input helps us train better roast judges.
-                    </p>
-                    <button
-                      onClick={onClose}
-                      className="px-6 py-2 rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
-                    >
-                      Close Results
-                    </button>
+                    <AgentEvaluationForm
+                      mode={mode}
+                      agentAName={agentANameForEval}
+                      agentAPersonality={agentAPersonalityForEval || ""}
+                      agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
+                      agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
+                      onScoresChange={handleAgentScoresChange}
+                    />
                   </div>
-                ) : (
-                  <FeedbackForm
-                    participantAName={participantAName}
-                    participantBName={participantBName}
-                    onSubmit={handleFeedbackSubmit}
-                  />
-                )}
-              </div>
 
-              {/* Transcript */}
-              {evaluation?.threadText && (
-                <TranscriptViewer threadText={evaluation.threadText} />
+                  {/* Your Vote Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <User className="w-5 h-5 text-primary" />
+                      <span className="font-semibold text-foreground">Your Vote</span>
+                    </div>
+                    <FeedbackForm
+                      participantAName={participantAName}
+                      participantBName={participantBName}
+                      onScoresChange={handleFeedbackScoresChange}
+                    />
+                  </div>
+
+                  {/* Single Submit Button */}
+                  <button 
+                    type="button"
+                    onClick={handleSubmitAll}
+                    className="w-full py-3 px-4 rounded-xl font-semibold gradient-fire text-primary-foreground hover:opacity-90 transition-opacity"
+                  >
+                    Submit Evaluation
+                  </button>
+
+                  {/* Transcript */}
+                  {evaluation?.threadText && (
+                    <TranscriptViewer threadText={evaluation.threadText} />
+                  )}
+                </>
               )}
             </div>
           )}

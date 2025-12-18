@@ -145,7 +145,7 @@ export const PERSONALITY_DESCRIPTIONS: Record<string, string> = {
 };
 
 export const BATTLE_CONFIG = {
-  maxMessagesPerParticipant: 5,
+  maxMessagesPerParticipant: 3,
   defaultTimeLimit: 60,
   minMessageLength: 1,
   maxMessageLength: 500,
