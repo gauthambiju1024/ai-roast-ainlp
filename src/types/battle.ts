@@ -42,12 +42,25 @@ export interface RoastScores {
   overall: number;
 }
 
+export interface LLMJudgeVerdict {
+  winner_funniest_line?: {
+    speaker: "A" | "B";
+    line: string;
+  };
+  overall_funniest_line?: {
+    speaker: "A" | "B";
+    line: string;
+  };
+  justification: string;
+}
+
 export interface EvaluationResult {
   participantAScores: RoastScores;
   participantBScores: RoastScores;
   winner: "A" | "B" | "TIE";
   margin: number;
   llmVerdict?: string;
+  llmJudgeVerdict?: LLMJudgeVerdict;
   threadText?: string; // For transcript display
 }
 
