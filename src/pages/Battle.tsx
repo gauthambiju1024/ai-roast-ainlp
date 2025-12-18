@@ -100,7 +100,11 @@ const Battle = () => {
       console.log("RoastJudge response:", data);
       
       // Map API response to EvaluationResult (scores are 0-100 floats)
-      const evalResult: EvaluationResult = {
+      const winner = (data.winner === "A" || data.winner === "B" || data.winner === "TIE") 
+        ? data.winner 
+        : "TIE";
+      
+      let evalResult: EvaluationResult = {
         participantAScores: {
           humor: data.A_humor ?? 0,
           punch: data.A_punch ?? 0,
@@ -115,13 +119,28 @@ const Battle = () => {
           relevance: data.B_relevance ?? 0,
           overall: data.overall_B ?? 0,
         },
-        winner: (data.winner === "A" || data.winner === "B" || data.winner === "TIE") 
-          ? data.winner 
-          : "TIE",
+        winner,
         margin: Math.abs(data.margin ?? 0),
-        llmVerdict: `The RoastJudge has spoken! With an overall score of ${Math.round(data.overall_A)} vs ${Math.round(data.overall_B)}, Player ${data.winner} takes the crown${data.winner !== "TIE" ? `. Margin of victory: ${Math.abs(data.margin).toFixed(1)} points.` : "."}`,
+        llmVerdict: `The RoastJudge has spoken! With an overall score of ${Math.round(data.overall_A)} vs ${Math.round(data.overall_B)}, Player ${winner} takes the crown${winner !== "TIE" ? `. Margin of victory: ${Math.abs(data.margin).toFixed(1)} points.` : "."}`,
         threadText: thread_text,
       };
+      
+      // Call LLM Judge for funniest line selection
+      try {
+        console.log("Calling LLM Judge for funniest line selection...");
+        const { data: llmData, error: llmError } = await supabase.functions.invoke('llm-judge', {
+          body: { thread_text, winner }
+        });
+        
+        if (llmError) {
+          console.error("LLM Judge error:", llmError);
+        } else if (llmData) {
+          console.log("LLM Judge response:", llmData);
+          evalResult.llmJudgeVerdict = llmData;
+        }
+      } catch (llmErr) {
+        console.error("Failed to call LLM Judge:", llmErr);
+      }
       
       setEvaluation(evalResult);
       setShowEvaluationModal(true);
