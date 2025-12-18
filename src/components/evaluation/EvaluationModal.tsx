@@ -5,7 +5,7 @@ import { FeedbackForm } from "./FeedbackForm";
 import { TranscriptViewer } from "./TranscriptViewer";
 import { AgentEvaluationForm } from "./AgentEvaluationForm";
 import { EvaluationResult, HumanFeedback, AgentEvaluation, AgentEvaluationScores, BattleMode } from "@/types/battle";
-import { Trophy, Bot, User, Sparkles, Quote, Lightbulb } from "lucide-react";
+import { Trophy, User, Sparkles, Quote, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EvaluationModalProps {
@@ -140,6 +140,11 @@ export const EvaluationModal = ({
           {/* Results Tab */}
           {activeTab === "results" && evaluation && (
             <div className="space-y-6">
+              {/* Transcript - moved to top */}
+              {evaluation.threadText && (
+                <TranscriptViewer threadText={evaluation.threadText} />
+              )}
+
               {/* Score Cards */}
               <div className="grid md:grid-cols-2 gap-4">
                 <ScoreCard
@@ -236,11 +241,6 @@ export const EvaluationModal = ({
                   </p>
                 )}
               </div>
-
-              {/* Transcript */}
-              {evaluation.threadText && (
-                <TranscriptViewer threadText={evaluation.threadText} />
-              )}
             </div>
           )}
 
@@ -265,34 +265,32 @@ export const EvaluationModal = ({
                 </div>
               ) : (
                 <>
-                  {/* Agent Rating Section */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Bot className="w-5 h-5 text-primary" />
-                      <span className="font-semibold text-foreground">Agent Rating</span>
-                    </div>
-                    <AgentEvaluationForm
-                      mode={mode}
-                      agentAName={agentANameForEval}
-                      agentAPersonality={agentAPersonalityForEval || ""}
-                      agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
-                      agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
-                      onScoresChange={handleAgentScoresChange}
-                    />
-                  </div>
+                  {/* Transcript - moved to top */}
+                  {evaluation?.threadText && (
+                    <TranscriptViewer threadText={evaluation.threadText} />
+                  )}
 
-                  {/* Your Vote Section */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <User className="w-5 h-5 text-primary" />
-                      <span className="font-semibold text-foreground">Give Your Own Evaluation Scores</span>
-                    </div>
-                    <FeedbackForm
-                      participantAName={participantAName}
-                      participantBName={participantBName}
-                      onScoresChange={handleFeedbackScoresChange}
-                    />
-                  </div>
+                  {/* Help text */}
+                  <p className="text-sm text-muted-foreground text-center">
+                    Help us improve our AI personalities & help train our model to evaluate better
+                  </p>
+
+                  {/* Agent Rating Section - no subheading */}
+                  <AgentEvaluationForm
+                    mode={mode}
+                    agentAName={agentANameForEval}
+                    agentAPersonality={agentAPersonalityForEval || ""}
+                    agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
+                    agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
+                    onScoresChange={handleAgentScoresChange}
+                  />
+
+                  {/* Feedback Section - no subheading */}
+                  <FeedbackForm
+                    participantAName={participantAName}
+                    participantBName={participantBName}
+                    onScoresChange={handleFeedbackScoresChange}
+                  />
 
                   {/* Single Submit Button */}
                   <button 
@@ -302,11 +300,6 @@ export const EvaluationModal = ({
                   >
                     Submit Evaluation
                   </button>
-
-                  {/* Transcript */}
-                  {evaluation?.threadText && (
-                    <TranscriptViewer threadText={evaluation.threadText} />
-                  )}
                 </>
               )}
             </div>
