@@ -46,6 +46,11 @@ export const FeedbackForm = ({
 
   return (
     <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-lg font-bold text-foreground mb-1">Your Feedback</h3>
+        <p className="text-sm text-muted-foreground">Help train judge to evaluate better</p>
+      </div>
+
       <div className="grid md:grid-cols-2 gap-6">
         {/* Participant A */}
         <div className="space-y-4">
