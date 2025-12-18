@@ -513,12 +513,17 @@ const Battle = () => {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {battle.messages.length === 0 && (
-              <div className="flex items-center justify-center h-full">
+              <div className="flex flex-col items-center justify-center h-full gap-4">
                 <p className="text-muted-foreground">
                   {battle.mode === "ai_vs_ai" 
                     ? "The battle is about to begin..." 
                     : "Drop the first roast to start the battle!"}
                 </p>
+                {battle.mode === "human_vs_ai" && (
+                  <p className="text-xs text-muted-foreground/70 text-center max-w-sm">
+                    🔒 Your responses are stored to improve our AI. Avoid sharing personal information.
+                  </p>
+                )}
               </div>
             )}
             
