@@ -4,8 +4,8 @@ import { ScoreCard } from "./ScoreCard";
 import { FeedbackForm } from "./FeedbackForm";
 import { TranscriptViewer } from "./TranscriptViewer";
 import { AgentEvaluationForm } from "./AgentEvaluationForm";
-import { EvaluationResult, HumanFeedback, AgentEvaluation, BattleMode } from "@/types/battle";
-import { MessageSquare, Brain, User, Bot } from "lucide-react";
+import { EvaluationResult, HumanFeedback, AgentEvaluation, AgentEvaluationScores, BattleMode } from "@/types/battle";
+import { MessageSquare, Brain, User, Bot, Sparkles, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EvaluationModalProps {
@@ -38,15 +38,39 @@ export const EvaluationModal = ({
   const [activeTab, setActiveTab] = useState<TabType>("scores");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [agentFeedbackSubmitted, setAgentFeedbackSubmitted] = useState(false);
+  const [agentScores, setAgentScores] = useState<{ a: AgentEvaluationScores; b?: AgentEvaluationScores } | null>(null);
+  const [humanFeedback, setHumanFeedback] = useState<HumanFeedback | null>(null);
 
-  const handleAgentFeedbackSubmit = (evaluations: AgentEvaluation[]) => {
+  const handleAgentScoresChange = (aScores: AgentEvaluationScores, bScores?: AgentEvaluationScores) => {
+    setAgentScores({ a: aScores, b: bScores });
+  };
+
+  const handleAgentSubmit = () => {
+    if (!agentScores) return;
+    const evaluations: AgentEvaluation[] = [{
+      participantId: mode === "human_vs_ai" ? "B" : "A",
+      personality: mode === "human_vs_ai" ? (participantBPersonality || "") : (participantAPersonality || ""),
+      scores: agentScores.a
+    }];
+    if (mode === "ai_vs_ai" && agentScores.b) {
+      evaluations.push({
+        participantId: "B",
+        personality: participantBPersonality || "",
+        scores: agentScores.b
+      });
+    }
     onAgentEvaluationSubmit(evaluations);
     setAgentFeedbackSubmitted(true);
     setActiveTab("feedback");
   };
 
-  const handleFeedbackSubmit = (feedback: HumanFeedback) => {
-    onFeedbackSubmit(feedback);
+  const handleFeedbackChange = (feedback: HumanFeedback) => {
+    setHumanFeedback(feedback);
+  };
+
+  const handleFeedbackSubmit = () => {
+    if (!humanFeedback) return;
+    onFeedbackSubmit(humanFeedback);
     setFeedbackSubmitted(true);
   };
 
@@ -134,14 +158,26 @@ export const EvaluationModal = ({
                 <p className="text-muted-foreground text-center">Now rate the roast quality in "Your Vote" tab.</p>
               </div>
             ) : (
-              <AgentEvaluationForm
-                mode={mode}
-                agentAName={agentANameForEval}
-                agentAPersonality={agentAPersonalityForEval || ""}
-                agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
-                agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
-                onSubmit={handleAgentFeedbackSubmit}
-              />
+              <div className="space-y-4">
+                <p className="text-base font-medium text-muted-foreground flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  Help us improve our AI personalities
+                </p>
+                <AgentEvaluationForm
+                  mode={mode}
+                  agentAName={agentANameForEval}
+                  agentAPersonality={agentAPersonalityForEval || ""}
+                  agentBName={mode === "ai_vs_ai" ? participantBName : undefined}
+                  agentBPersonality={mode === "ai_vs_ai" ? participantBPersonality : undefined}
+                  onScoresChange={handleAgentScoresChange}
+                />
+                <button
+                  onClick={handleAgentSubmit}
+                  className="w-full py-3 rounded-xl gradient-fire text-primary-foreground font-semibold hover:opacity-90 transition-opacity"
+                >
+                  Submit & Continue
+                </button>
+              </div>
             ))}
 
           {activeTab === "llm" && (
@@ -163,7 +199,7 @@ export const EvaluationModal = ({
                 <div className="w-16 h-16 rounded-full gradient-fire flex items-center justify-center mb-4">
                   <User className="w-8 h-8 text-primary-foreground" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2 text-lg">Thanks for your feedback!</h3>
+                <h3 className="text-xl font-bold text-foreground mb-2">Thanks for your feedback!</h3>
                 <p className="text-muted-foreground text-center mb-6">Your input helps us train better roast judges.</p>
                 <button
                   onClick={onClose}
@@ -173,11 +209,23 @@ export const EvaluationModal = ({
                 </button>
               </div>
             ) : (
-              <FeedbackForm
-                participantAName={participantAName}
-                participantBName={participantBName}
-                onSubmit={handleFeedbackSubmit}
-              />
+              <div className="space-y-4">
+                <p className="text-base font-medium text-muted-foreground flex items-center gap-2">
+                  <Target className="w-5 h-5 text-secondary" />
+                  Help us train our model to evaluate better
+                </p>
+                <FeedbackForm
+                  participantAName={participantAName}
+                  participantBName={participantBName}
+                  onScoresChange={handleFeedbackChange}
+                />
+                <button
+                  onClick={handleFeedbackSubmit}
+                  className="w-full py-3 rounded-xl gradient-fire text-primary-foreground font-semibold hover:opacity-90 transition-opacity"
+                >
+                  Submit Feedback
+                </button>
+              </div>
             ))}
         </div>
       </DialogContent>
