@@ -143,11 +143,6 @@ export const AgentEvaluationForm = ({
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-lg font-bold text-foreground mb-1">Rate the AI Agents</h3>
-        <p className="text-sm text-muted-foreground">Help us improve our AI personalities</p>
-      </div>
-
       <div className={cn("gap-6", isAIvsAI ? "grid md:grid-cols-2" : "")}>
         <AgentCard 
           title={agentAName} 
