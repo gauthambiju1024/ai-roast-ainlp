@@ -1343,14 +1343,19 @@ export function scaleToHundred(value: number): number {
 }
 ```
 ---
-## 13. EVALUATION & SCORING SYSTEM
+## 14. EVALUATION & SCORING SYSTEM
 
-A form for Human Feedback was also added in the UI for training and evaluation purpose. The following graphs show the results of the evaluation ( csv files are also uploaded ) 
-**Evaluation of the Judge**
-<img width="485" height="239" alt="image" src="https://github.com/user-attachments/assets/ce35b870-84c9-491a-a297-b266cff69380" />
-**Evaluation of the AI agents**
-<img width="311" height="235" alt="image" src="https://github.com/user-attachments/assets/2cdf95f7-444a-4c15-bc9a-f8057711ec01" />
-Moreover it was observed that none of the users flagged an ethic violation 
+A form for Human Feedback was also added in the UI for training and evaluation purposes.  
+The following graphs show the results of the evaluation (CSV files are also uploaded).
+
+### Evaluation of the Judge
+![Evaluation of the Judge](https://github.com/user-attachments/assets/ce35b870-84c9-491a-a297-b266cff69380)
+
+### Evaluation of the AI Agents
+![Evaluation of the AI Agents](https://github.com/user-attachments/assets/2cdf95f7-444a-4c15-bc9a-f8057711ec01)
+
+Moreover, it was observed that none of the users flagged an ethical violation.
+
 ---
 
 ## 15. USER INTERFACE & EXPERIENCE DESIGN
