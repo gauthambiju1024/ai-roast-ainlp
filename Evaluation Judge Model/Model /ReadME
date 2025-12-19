@@ -1,0 +1,115 @@
+# Roast Evaluation Judge  
+## Model Architecture & Technical Overview
+
+---
+
+## 1. Model Purpose and Scope
+
+The **Roast Evaluation Judge** is a transformer-based neural scoring model designed to objectively evaluate conversational roast battles between two participants, denoted as **Speaker A** and **Speaker B**.
+
+Unlike generative language models that produce dialogue, this system is purpose-built for **comparative judgment**. Its primary function is to assign interpretable, multi-dimensional scores that reflect the comedic and rhetorical quality of each participant’s performance.
+
+The model is optimized for:
+
+- Stability and determinism  
+- Consistent scoring across runs  
+- Low-latency, real-time evaluation  
+
+These properties make it suitable for deployment as an API-backed judge in both **AI-versus-AI** and **Human-versus-AI** roast battle settings.
+
+---
+
+## 2. Core Architecture
+
+At its foundation, the model uses a **pretrained encoder-only Transformer**, following a **RoBERTa-style architecture**.
+
+This transformer acts purely as a **contextual feature extractor**, converting the full conversational context into dense semantic representations. The model does **not** perform token-level generation. Instead, it leverages the transformer’s capacity to holistically encode:
+
+- Discourse structure  
+- Tone and intent  
+- Stylistic and rhetorical nuance  
+- Cross-turn conversational dependencies  
+
+The encoder produces a sequence of hidden states. From this sequence, the **[CLS] token representation** is extracted. This pooled embedding functions as a compact summary of the entire roast interaction and serves as the **sole input** to the downstream scoring head.
+
+---
+
+## 3. Input Representation
+
+The evaluation input is constructed in a structured textual format that mirrors the data distribution used during training.
+
+Specifically, the model receives the following components:
+
+- The **entire battle thread**, consisting of a multi-turn conversation with explicit speaker labels  
+- A **concatenation of all utterances by Speaker A**  
+- A **concatenation of all utterances by Speaker B**
+
+These components are combined into a single input sequence using **explicit textual separators** (e.g., `THREAD`, `A_LAST`, `B_LAST`). This structure preserves speaker roles, turn boundaries, and contextual hierarchy.
+
+The resulting sequence is tokenized using the transformer’s native tokenizer and then **truncated or padded to a fixed maximum length**, ensuring:
+
+- Predictable memory usage  
+- Stable inference latency  
+- Consistent computational performance across inputs  
+
+---
+
+## 4. Scoring Head and Outputs
+
+On top of the transformer encoder sits a **lightweight feed-forward regression head**, implemented as a small **multilayer perceptron (MLP)**.
+
+This scoring head maps the pooled transformer embedding to **eight continuous outputs**, corresponding to four evaluation dimensions for each speaker:
+
+### Evaluation Dimensions (Per Speaker)
+
+- **Humor** — comedic effectiveness and wit  
+- **Punch** — sharpness, impact, and delivery strength  
+- **Originality** — novelty and avoidance of clichés  
+- **Relevance** — contextual alignment with the opponent and prior turns  
+
+Each subscore is predicted **independently** as a real-valued regression output.
+
+To improve interpretability and downstream usability, raw outputs are passed through a **sigmoid-based normalization**, mapping all scores onto a **0–100 scale**.
+
+---
+
+## 5. Aggregation and Winner Determination
+
+For each speaker, an **overall score** is computed as the arithmetic mean of their four subscores:
+
+- Humor  
+- Punch  
+- Originality  
+- Relevance  
+
+The model then compares the overall scores of **Speaker A** and **Speaker B** to determine the outcome of the battle.
+
+A **configurable tie threshold** is applied to prevent overconfident decisions in marginal cases:
+
+- If the score difference falls within the threshold, the result is labeled **TIE**
+- Otherwise, the speaker with the higher overall score is declared the **winner**
+
+This decision logic ensures that the model behaves conservatively when differences are statistically or stylistically ambiguous.
+
+---
+
+## 6. Design Philosophy and Extensibility
+
+The Roast Evaluation Judge is explicitly designed as a **comparative evaluation model**, not a conversational agent. This separation of concerns allows the system to remain:
+
+- **Deterministic and stable** across repeated evaluations  
+- **Fast enough for real-time inference**  
+- **Robust to stylistic variation** across speakers, personas, and formats  
+
+The architecture is fully compatible with **retraining or fine-tuning using human feedback**. New judgment criteria, reweighted scoring dimensions, or adaptations to different comedic styles can be incorporated **without altering**:
+
+- The inference API  
+- The deployment pipeline  
+- The external integration contract  
+
+This makes the model well-suited for iterative improvement in production environments.
+
+---
+
+
+
