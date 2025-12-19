@@ -1,5 +1,5 @@
 Roast Evaluation Judge — Model Architecture & Technical Overview
-
+https://colab.research.google.com/drive/1cmgyfnPSMeumSJ8JzREa0bhsIxIouKc7?usp=sharing
 Model Purpose and Scope
 
 The Roast Evaluation Judge is a transformer-based neural scoring model designed to objectively evaluate conversational roast battles between two participants, denoted as Speaker A and Speaker B. Unlike generative models that produce dialogue, this system is purpose-built for comparative judgment, assigning interpretable scores that reflect comedic and rhetorical quality across multiple dimensions. The model is optimized for stability, consistency, and real-time evaluation, making it suitable for deployment as an API-backed judge in AI-versus-AI or Human-versus-AI roast battles.
