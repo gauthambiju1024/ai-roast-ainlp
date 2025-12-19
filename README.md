@@ -18,13 +18,14 @@
 11. [Component Hierarchy & Design Patterns](#11-component-hierarchy--design-patterns)
 12. [Battle Flow Logic & Algorithms](#12-battle-flow-logic--algorithms)
 13. [Evaluation & Scoring System](#13-evaluation--scoring-system)
-14. [User Interface & Experience Design](#14-user-interface--experience-design)
-15. [Security Architecture](#15-security-architecture)
-16. [External API Integrations](#16-external-api-integrations)
-17. [Error Handling & Resilience](#17-error-handling--resilience)
-18. [Performance Considerations](#18-performance-considerations)
-19. [Future Enhancement Opportunities](#19-future-enhancement-opportunities)
-20. [Complete File Inventory](#20-complete-file-inventory)
+14. [User Feedback]((#14-evaluation--scoring-system)
+15. [User Interface & Experience Design](#15-user-interface--experience-design)
+16. [Security Architecture](#16-security-architecture)
+17. [External API Integrations](#17-external-api-integrations)
+18. [Error Handling & Resilience](#18-error-handling--resilience)
+19. [Performance Considerations](#19-performance-considerations)
+20. [Future Enhancement Opportunities](#20-future-enhancement-opportunities)
+21. [Complete File Inventory](#21-complete-file-inventory)
 ````
 ---
 
@@ -1341,12 +1342,20 @@ export function scaleToHundred(value: number): number {
   return value * 100;
 }
 ```
+---
+## 13. EVALUATION & SCORING SYSTEM
 
+A form for Human Feedback was also added in the UI for training and evaluation purpose. The following graphs show the results of the evaluation ( csv files are also uploaded ) 
+**Evaluation of the Judge**
+<img width="485" height="239" alt="image" src="https://github.com/user-attachments/assets/ce35b870-84c9-491a-a297-b266cff69380" />
+**Evaluation of the AI agents**
+<img width="311" height="235" alt="image" src="https://github.com/user-attachments/assets/2cdf95f7-444a-4c15-bc9a-f8057711ec01" />
+Moreover it was observed that none of the users flagged an ethic violation 
 ---
 
-## 14. USER INTERFACE & EXPERIENCE DESIGN
+## 15. USER INTERFACE & EXPERIENCE DESIGN
 
-### 14.1 Design System Tokens (`src/index.css`)
+### 15.1 Design System Tokens (`src/index.css`)
 
 #### Color Palette
 
@@ -1376,13 +1385,13 @@ export function scaleToHundred(value: number): number {
 --glow-accent: 0 0 40px hsl(340 80% 55% / 0.2);
 ```
 
-### 14.2 Typography
+### 15.2 Typography
 
 * **Primary Font**: Sora (Google Fonts)
 * **Weights**: 300, 400, 500, 600, 700, 800
 * **Headings**: Bold with tight tracking
 
-### 14.3 Animation System
+### 15.3 Animation System
 
 | Animation            | Duration | Easing      | Purpose          |
 | -------------------- | -------: | ----------- | ---------------- |
@@ -1392,7 +1401,7 @@ export function scaleToHundred(value: number): number {
 | `animate-pulse-glow` |       2s | ease-in-out | Continuous glow  |
 | `animate-float`      |       3s | ease-in-out | Floating effect  |
 
-### 14.4 Component Styling Classes
+### 15.4 Component Styling Classes
 
 ```css
 /* Chat bubbles */
@@ -1423,9 +1432,9 @@ export function scaleToHundred(value: number): number {
 
 ---
 
-## 15. SECURITY ARCHITECTURE
+## 16. SECURITY ARCHITECTURE
 
-### 15.1 Row-Level Security Policies
+### 16.1 Row-Level Security Policies
 
 Both tables implement permissive INSERT and SELECT policies with `true` conditions, enabling:
 
@@ -1437,7 +1446,7 @@ Both tables implement permissive INSERT and SELECT policies with `true` conditio
 * UPDATE operations: Blocked
 * DELETE operations: Blocked
 
-### 15.2 API Key Management
+### 16.2 API Key Management
 
 | Secret Name                 | Purpose                           | Access Level        |
 | --------------------------- | --------------------------------- | ------------------- |
@@ -1447,7 +1456,7 @@ Both tables implement permissive INSERT and SELECT policies with `true` conditio
 | `GOOGLE_AI_API_KEY`         | Gemini LLM judge                  | Edge functions only |
 | `SUPABASE_SERVICE_ROLE_KEY` | Admin operations                  | System only         |
 
-### 15.3 Data Privacy Considerations
+### 16.3 Data Privacy Considerations
 
 The application displays privacy notices:
 
@@ -1456,7 +1465,7 @@ The application displays privacy notices:
 Avoid sharing personal information.
 ```
 
-### 15.4 CORS Configuration
+### 16.4 CORS Configuration
 
 All edge functions implement permissive CORS:
 
@@ -1469,9 +1478,9 @@ const corsHeaders = {
 
 ---
 
-## 16. EXTERNAL API INTEGRATIONS
+## 17. EXTERNAL API INTEGRATIONS
 
-### 16.1 Lyzr AI Platform Integration
+### 17.1 Lyzr AI Platform Integration
 
 **Base URL:** `https://agent-prod.studio.lyzr.ai/v3/inference/chat/`
 
@@ -1488,7 +1497,7 @@ const corsHeaders = {
 
 **Authentication:** API key via `x-api-key` header
 
-### 16.2 RoastJudge API Integration
+### 17.2 RoastJudge API Integration
 
 **Base URL:** `https://roastjudge-api-342803715506.asia-south1.run.app`
 
@@ -1521,7 +1530,7 @@ const corsHeaders = {
 }
 ```
 
-### 16.3 Google Gemini API Integration
+### 17.3 Google Gemini API Integration
 
 **Endpoint:** `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`
 
@@ -1534,9 +1543,9 @@ const corsHeaders = {
 
 ---
 
-## 17. ERROR HANDLING & RESILIENCE
+## 18. ERROR HANDLING & RESILIENCE
 
-### 17.1 Frontend Error Handling
+### 18.1 Frontend Error Handling
 
 ```typescript
 // API call with fallback
@@ -1554,7 +1563,7 @@ const handleRetryEvaluation = () => {
 };
 ```
 
-### 17.2 Edge Function Error Handling
+### 18.2 Edge Function Error Handling
 
 ```typescript
 // Timeout handling
@@ -1572,7 +1581,7 @@ try {
 }
 ```
 
-### 17.3 Fallback Responses
+### 18.3 Fallback Responses
 
 ```typescript
 const fallbackResponses = [
@@ -1585,16 +1594,16 @@ return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
 
 ---
 
-## 18. PERFORMANCE CONSIDERATIONS
+## 19. PERFORMANCE CONSIDERATIONS
 
-### 18.1 Optimization Techniques
+### 19.1 Optimization Techniques
 
 1. **React.memo and useCallback**: Used for stable references
 2. **Lazy evaluation**: AI responses triggered only when needed
 3. **Typing animation**: 35ms per character for natural pacing
 4. **Guard patterns**: `aiTurnInProgress.current` prevents double API calls
 
-### 18.2 State Update Batching
+### 19.2 State Update Batching
 
 ```typescript
 set({
@@ -1605,7 +1614,7 @@ set({
 });
 ```
 
-### 18.3 Network Efficiency
+### 19.3 Network Efficiency
 
 * Single edge function call per AI response
 * Batch evaluation (scores + LLM verdict) minimized
@@ -1613,9 +1622,9 @@ set({
 
 ---
 
-## 19. FUTURE ENHANCEMENT OPPORTUNITIES
+## 20. FUTURE ENHANCEMENT OPPORTUNITIES
 
-### 19.1 Feature Roadmap
+### 20.1 Feature Roadmap
 
 | Priority | Feature               | Description                         |
 | -------- | --------------------- | ----------------------------------- |
@@ -1627,7 +1636,7 @@ set({
 | Low      | Mobile App            | React Native version                |
 | Low      | Real-time Multiplayer | Human vs Human battles              |
 
-### 19.2 Technical Improvements
+### 20.2 Technical Improvements
 
 1. **Caching layer** for repeated API calls
 2. **WebSocket integration** for real-time AI vs AI streaming
@@ -1637,9 +1646,9 @@ set({
 
 ---
 
-## 20. COMPLETE FILE INVENTORY
+## 21. COMPLETE FILE INVENTORY
 
-### 20.1 Source Files by Category
+### 21.1 Source Files by Category
 
 #### Pages (5 files)
 
