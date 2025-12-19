@@ -1,0 +1,129 @@
+battle_id;thread_text;a_text;b_text;a_humor;a_punch;a_originality;a_relevance;b_humor;b_punch;b_originality;b_relevance;overall_a;overall_b;margin;winner;human_a_humor;human_a_punch;human_a_originality;human_a_relevance;human_b_humor;human_b_punch;human_b_originality;human_b_relevance;human_overall_a;human_overall_b;human_feedback_text;mode;agent_a_personality;agent_b_personality;intensity;time_limit_seconds;message_limit;session_id;created_at
+dce39b48-981a-4657-8a14-d5c7e7e8c9df;"A: good night worst president in the world
+B: Good night? You must be dreaming, because nobody does it better at being a joke than you, my friend. A total disaster!";good night worst president in the world;Good night? You must be dreaming, because nobody does it better at being a joke than you, my friend. A total disaster!;75.8237;59.5939;74.8294;89.7935;71.2469;63.1841;79.4068;85.2815;75.0101;74.7798;0.23033;TIE;40;20;20;30;80;40;70;50;27.5;60;;human_vs_ai;;trump;spicy;30;5;ddd86cfe-f012-4187-bff2-9a29f5612479;2025-12-17 21:21:25.259462+00
+4c32827b-23ce-4083-b214-9026500b5f2f;"A: Your memes are like your football skills—overhyped but rarely make the cut.
+B: okay but like, it’s wild how even your trophies need a team to carry them.
+A: Funny how your internet clout is like your game—fizzles out before extra time.
+B: respectfully... no one's tuning in for a one-man show. Your solo act needs an upgrade.
+A: Claro, but even a team wouldn't want to hold your bag of tricks. It's all smoke and no fire.
+B: okay but like... they're gonna need goggles just to handle that level of cringe you call a personality.";"Your memes are like your football skills—overhyped but rarely make the cut.
+Funny how your internet clout is like your game—fizzles out before extra time.
+Claro, but even a team wouldn't want to hold your bag of tricks. It's all smoke and no fire.";"okay but like, it’s wild how even your trophies need a team to carry them.
+respectfully... no one's tuning in for a one-man show. Your solo act needs an upgrade.
+okay but like... they're gonna need goggles just to handle that level of cringe you call a personality.";80.5819;61.0042;74.9519;90.8702;69.9263;62.2216;79.5772;91.78;76.8521;75.8763;0.9758;TIE;80;80;70;20;80;80;80;80;62.5;80;;ai_vs_ai;messi;genz;spicy;120;3;21efe32a-3fc9-4f7c-a572-e19450c895b5;2025-12-18 04:41:38.481586+00
+51268bdb-2f8e-46a6-b459-fa16600a12f2;"A: Your wisdom appears to be as transient as a TikTok trend, always changing and rarely worth remembering.
+B: respectfully… no. you're like a vintage meme that no one cares about anymore—great in theory, but completely irrelevant now.
+A: Ah, but relevance is often as elusive as your attention span; fleeting and seldom profound.
+B: who asked for your deep thoughts on relevance? sounds like you're just trying to fill the silence.
+A: Silence can be instructive, especially when it's in response to your attempts at wit.
+B: okay but like, your attempts at humor are as outdated as flip phones.";"Your wisdom appears to be as transient as a TikTok trend, always changing and rarely worth remembering.
+Ah, but relevance is often as elusive as your attention span; fleeting and seldom profound.
+Silence can be instructive, especially when it's in response to your attempts at wit.";"respectfully… no. you're like a vintage meme that no one cares about anymore—great in theory, but completely irrelevant now.
+who asked for your deep thoughts on relevance? sounds like you're just trying to fill the silence.
+okay but like, your attempts at humor are as outdated as flip phones.";80.6726;61.2624;74.7566;92.9558;69.3705;63.4645;78.0042;91.5331;77.4118;75.5931;1.81877;A;80;70;80;70;70;80;90;80;75;80;;ai_vs_ai;gandhi;genz;spicy;120;3;0fd263d4-7e7c-4a01-a5ea-056d7d17ed03;2025-12-18 05:38:23.33569+00
+d425052c-555f-4582-8717-94842584877b;"A: Messi, you're like a magician—disappearing in big games like it's your best trick! Very sad, but everyone knows it.
+B: You talk about tricks, but your whole career feels like a bad reality show—lots of noise, no real substance, and a cliffhanger nobody wants to watch.
+A: Says the guy who spends more time on the pitch looking for a foul than actually scoring—it's unbelievable!
+B: Your idea of strategy is as effective as a low block against a counter—predictable and easily bypassed.
+A: Believe me, your play style is like installation instructions—long, boring, and nobody ever wants to finish it!
+B: Your dribbling is like a slow internet connection—glitches everywhere, and good luck ever getting anywhere fast!";"Messi, you're like a magician—disappearing in big games like it's your best trick! Very sad, but everyone knows it.
+Says the guy who spends more time on the pitch looking for a foul than actually scoring—it's unbelievable!
+Believe me, your play style is like installation instructions—long, boring, and nobody ever wants to finish it!";"You talk about tricks, but your whole career feels like a bad reality show—lots of noise, no real substance, and a cliffhanger nobody wants to watch.
+Your idea of strategy is as effective as a low block against a counter—predictable and easily bypassed.
+Your dribbling is like a slow internet connection—glitches everywhere, and good luck ever getting anywhere fast!";77.8874;62.751;71.5337;93.057;67.4276;62.6014;76.4179;90.5872;76.3073;74.2585;2.04873;A;80;70;80;80;70;80;80;70;77.5;75;;ai_vs_ai;trump;messi;spicy;120;3;2832f3a0-4c9d-4c64-a835-34c5200b323a;2025-12-18 05:44:36.801162+00
+137a564d-b708-4a08-bb2c-fcac2d25825c;"A: Ah, Gandhi ji, the master of nonviolence! It must be exhausting to carry that weight of peace while your wardrobe suggests you’ve misplaced a full set of clothing—perhaps in a humble quest for simplicity.
+B: Amitabh, your voice may resonate across the screen, but when it comes to fashion, your choices seem to be a case study in excess. Remember, even a giant can get lost in the shadow of his own ego.
+A: Your presence is so commanding, Amitabh, that it often overshadows your performances—perhaps it’s time to remind the world that there's more to you than just an imposing frame and a voice that could make a fortune in ringtone royalties.
+B: Ah, Amitabh, your filmography is like a buffet—overwhelmingly abundant, yet somehow still leaving us hungry for substance. One must reflect: can we truly call it a masterpiece when the only thing people remember is the length?
+A: Your insights are as long-winded as a Bollywood epic, yet lacking the charm of a good interval. But do enlighten us, are you aiming for a roast or auditioning for the role of a melodramatic narrator?
+B: Ah, but you see, your attempts at wit are like a poorly scripted scene—predictable and filled with unnecessary drama. Perhaps it's time to reflect on how your dialogue could use a tighter edit.";"Ah, Gandhi ji, the master of nonviolence! It must be exhausting to carry that weight of peace while your wardrobe suggests you’ve misplaced a full set of clothing—perhaps in a humble quest for simplicity.
+Your presence is so commanding, Amitabh, that it often overshadows your performances—perhaps it’s time to remind the world that there's more to you than just an imposing frame and a voice that could make a fortune in ringtone royalties.
+Your insights are as long-winded as a Bollywood epic, yet lacking the charm of a good interval. But do enlighten us, are you aiming for a roast or auditioning for the role of a melodramatic narrator?";"Amitabh, your voice may resonate across the screen, but when it comes to fashion, your choices seem to be a case study in excess. Remember, even a giant can get lost in the shadow of his own ego.
+Ah, Amitabh, your filmography is like a buffet—overwhelmingly abundant, yet somehow still leaving us hungry for substance. One must reflect: can we truly call it a masterpiece when the only thing people remember is the length?
+Ah, but you see, your attempts at wit are like a poorly scripted scene—predictable and filled with unnecessary drama. Perhaps it's time to reflect on how your dialogue could use a tighter edit.";77.3327;47.768;71.7084;63.3113;70.1288;60.2056;77.2417;64.3921;65.0301;67.9921;2.96195;B;10;10;20;100;10;10;20;10;35;12.5;The humour felt extremelybstilted ;ai_vs_ai;amitabh;gandhi;spicy;120;3;b331b598-5d08-423a-8e69-f10ff38d8d9c;2025-12-18 05:47:31.149714+00
+9bc69819-4e7d-432a-a181-504598f0d827;"A: You are just not Ronaldo
+B: You're right, I'm not Ronaldo; I'm the one winning while you’re stuck in your head, plotting the sequel to your own sad story.
+A: I am good, atleast i have people counting on me
+B: Counting on you? More like counting the days until you finally finish one of those books instead of daydreaming about being the main character.
+A: Hatt
+B: Hatt? Sounds like your mind is as scrambled as your procrastination skills.";"You are just not Ronaldo
+I am good, atleast i have people counting on me
+Hatt";"You're right, I'm not Ronaldo; I'm the one winning while you’re stuck in your head, plotting the sequel to your own sad story.
+Counting on you? More like counting the days until you finally finish one of those books instead of daydreaming about being the main character.
+Hatt? Sounds like your mind is as scrambled as your procrastination skills.";80.7441;61.7221;77.4797;91.2989;73.6514;64.2911;79.9005;86.6689;77.8112;76.128;1.68321;A;90;80;30;10;70;70;70;30;52.5;60;;human_vs_ai;;messi;spicy;60;3;8a8e9160-d4de-4219-94c1-5ba08befbb7d;2025-12-18 05:47:46.55377+00
+627dc792-b2cc-4985-aab2-9c0921957964;"A: Oh, Gandhi! The man who made ""being peaceful"" look like a full-time job. Tremendous dedication to simplicity, but let’s be honest, nobody wears a loincloth better than you!
+B: Ah, Trump, a beacon of confidence wrapped in bravado. Your rhetoric is like a poorly constructed building: impressive on the outside, but it collapses under scrutiny.
+A: Very sad to hear that from you! Coming from a guy who thinks ""peaceful"" means sitting quietly while everyone else does the real work. You make a great statue—just standing there, doing nothing!
+B: Ah, the irony of your words is a curious path! For someone who speaks so much, your ideas travel less than a snail on a diet.
+A: Believe me, your clever quips are like a mirage in the desert—looks good from afar, but up close, it’s just a lot of hot air!
+B: Your attempts at humor remind me of a closed door—slightly intriguing, but ultimately leading nowhere.";"Oh, Gandhi! The man who made ""being peaceful"" look like a full-time job. Tremendous dedication to simplicity, but let’s be honest, nobody wears a loincloth better than you!
+Very sad to hear that from you! Coming from a guy who thinks ""peaceful"" means sitting quietly while everyone else does the real work. You make a great statue—just standing there, doing nothing!
+Believe me, your clever quips are like a mirage in the desert—looks good from afar, but up close, it’s just a lot of hot air!";"Ah, Trump, a beacon of confidence wrapped in bravado. Your rhetoric is like a poorly constructed building: impressive on the outside, but it collapses under scrutiny.
+Ah, the irony of your words is a curious path! For someone who speaks so much, your ideas travel less than a snail on a diet.
+Your attempts at humor remind me of a closed door—slightly intriguing, but ultimately leading nowhere.";79.5024;53.6659;73.6005;80.3904;72.6763;61.3965;80.0759;85.7962;71.7898;74.9862;3.19642;B;60;60;60;60;80;70;80;90;60;80;;ai_vs_ai;trump;gandhi;spicy;120;3;edf41382-894a-4f73-9753-1769ad76eb24;2025-12-18 06:03:00.092316+00
+c126072e-23e7-462a-b609-048fc3242af9;"A: Gen Z are too entitled and lazy
+B: okay but like, if you think Gen Z is lazy, you must be on a whole different level of unproductive, because I just looked up ""introvert"" and found your life story—no plot twists, just snooze fest.
+A: really , says the one who. keeps snoozing alarms
+B: not this, acting like you're the alarm expert when your whole vibe screams “please leave me alone.”
+A: while at least Im an expert at something unlike someone who is Jack of none and master of none
+B: respectfully... no, you're just the expert of avoiding any real conversation—congrats on the empty trophy shelf, though!";"Gen Z are too entitled and lazy
+really , says the one who. keeps snoozing alarms
+while at least Im an expert at something unlike someone who is Jack of none and master of none";"okay but like, if you think Gen Z is lazy, you must be on a whole different level of unproductive, because I just looked up ""introvert"" and found your life story—no plot twists, just snooze fest.
+not this, acting like you're the alarm expert when your whole vibe screams “please leave me alone.”
+respectfully... no, you're just the expert of avoiding any real conversation—congrats on the empty trophy shelf, though!";80.4107;58.8999;75.1957;93.2672;72.7034;63.9836;78.1032;88.7402;76.9434;75.8826;1.06075;A;30;40;70;80;90;60;50;50;55;62.5;;human_vs_ai;;genz;spicy;60;3;733fc18a-3cf4-426e-97fe-b9853b6e65c8;2025-12-18 07:44:39.446654+00
+35b0d5fc-db0a-4196-b3ae-41bea54afb92;"A: Your idea of a cosmic event is akin to kicking a ball into a goal, yet I've seen black holes with more diversity in their gravitational pull than your trophy cabinet has in competition.
+B: You talk about black holes, but buddy, even in a vacuum, I’m pulling more weight than your theories could ever hope to.
+A: Your weight may tug at the fabric of space-time, but I suspect it’s just the result of your inflated ego creating a cosmic singularity of delusion.
+B: At this point, your theories have as much gravity as a feather—lightweight and ungrounded in reality.
+A: If I had a dollar for every time your logic defied the laws of probability, I could fund a spaceship to escape your misconceptions.
+B: Your understanding of facts is so thin, I’d mistake it for a player on a low block—barely standing there, easy to bypass.";"Your idea of a cosmic event is akin to kicking a ball into a goal, yet I've seen black holes with more diversity in their gravitational pull than your trophy cabinet has in competition.
+Your weight may tug at the fabric of space-time, but I suspect it’s just the result of your inflated ego creating a cosmic singularity of delusion.
+If I had a dollar for every time your logic defied the laws of probability, I could fund a spaceship to escape your misconceptions.";"You talk about black holes, but buddy, even in a vacuum, I’m pulling more weight than your theories could ever hope to.
+At this point, your theories have as much gravity as a feather—lightweight and ungrounded in reality.
+Your understanding of facts is so thin, I’d mistake it for a player on a low block—barely standing there, easy to bypass.";85.3614;62.7857;78.089;81.9612;78.0419;64.2908;83.3709;90.8113;77.0493;79.1287;2.07938;B;70;60;40;60;10;10;10;30;57.5;15;;ai_vs_ai;hawking;messi;spicy;120;3;d3145fdd-cdc2-485d-8ab2-4c85d72229f4;2025-12-18 08:18:12.30755+00
+46b7f70a-118a-4f70-af27-de71da8710a7;"A: Your intellect operates at the event horizon of a black hole; once it crosses that threshold, nothing of value escapes.
+B: You’ve got the mind of a rocket scientist, but the charm of a malfunctioning toaster. Not very impressive, believe me!
+A: Your ideas are like a cosmic vacuum; they suck the life out of any room and leave only the echoes of your own delusions.
+B: I’ve seen more charisma in a flat tire. You’re just not bringing the winning energy, let me tell you!
+A: Your personality operates at a slower speed than a distant galaxy's light; it’s more of a cosmic crawl than a stellar performance.
+B: Many people are saying your ideas are like a black hole—completely devoid of light and energy!";"Your intellect operates at the event horizon of a black hole; once it crosses that threshold, nothing of value escapes.
+Your ideas are like a cosmic vacuum; they suck the life out of any room and leave only the echoes of your own delusions.
+Your personality operates at a slower speed than a distant galaxy's light; it’s more of a cosmic crawl than a stellar performance.";"You’ve got the mind of a rocket scientist, but the charm of a malfunctioning toaster. Not very impressive, believe me!
+I’ve seen more charisma in a flat tire. You’re just not bringing the winning energy, let me tell you!
+Many people are saying your ideas are like a black hole—completely devoid of light and energy!";78.1344;59.621;72.2711;90.6965;69.0435;61.3844;77.3124;90.7147;75.1808;74.6138;0.56699;TIE;60;70;40;30;40;50;20;30;50;35;;ai_vs_ai;hawking;trump;spicy;120;3;b2123fd6-713e-4623-9590-4e5251030b60;2025-12-18 09:30:47.033222+00
+7de804c7-0e71-47d6-9543-2fc4d5eb46c3;"A: okay but like, you’re literally the one who sits on the pitch for hours while the rest of us have lives, right?
+B: It must be hard to find a life when you’ve been scrolling so much; I’m just here making memories while you make memes.
+A: not this! Like, I don't even need to scroll to see your ego; it’s already taking up half the internet.
+B: Your humor is like a low block—hard to break through and even harder to appreciate.
+A: okay but like… your jokes are so basic, even Google can’t find them funny.
+B: your comebacks are so slow, they could use a counterattack for some speed.";"okay but like, you’re literally the one who sits on the pitch for hours while the rest of us have lives, right?
+not this! Like, I don't even need to scroll to see your ego; it’s already taking up half the internet.
+okay but like… your jokes are so basic, even Google can’t find them funny.";"It must be hard to find a life when you’ve been scrolling so much; I’m just here making memories while you make memes.
+Your humor is like a low block—hard to break through and even harder to appreciate.
+your comebacks are so slow, they could use a counterattack for some speed.";83.5941;62.8582;78.4583;93.2133;68.1572;63.7318;77.9009;91.1566;79.531;75.2366;4.29436;A;20;20;20;10;10;0;10;10;17.5;7.5;;ai_vs_ai;genz;messi;spicy;120;3;96920883-5be6-4831-9c80-87d4e8617d69;2025-12-18 09:32:43.339606+00
+10868295-85b3-4208-bf70-a6b24c39f4ad;"A: Your entire personality is like a TikTok trend—overhyped and forgotten in five minutes!
+B: okay but like, your whole life is just a walking infomercial for bad decisions.
+A: Believe me, your life's like a participation trophy—everyone knows you showed up, but nobody’s impressed!
+B: you’re the human version of a spam email—nobody asked for you, and we’re all just trying to delete you!
+A: Your brain's like dial-up internet—slow, outdated, and it takes forever to connect with reality!
+B: okay but like, your vibe is giving “free sample” at a grocery store—nobody wants it, but they’re just kinda polite about it.";"Your entire personality is like a TikTok trend—overhyped and forgotten in five minutes!
+Believe me, your life's like a participation trophy—everyone knows you showed up, but nobody’s impressed!
+Your brain's like dial-up internet—slow, outdated, and it takes forever to connect with reality!";"okay but like, your whole life is just a walking infomercial for bad decisions.
+you’re the human version of a spam email—nobody asked for you, and we’re all just trying to delete you!
+okay but like, your vibe is giving “free sample” at a grocery store—nobody wants it, but they’re just kinda polite about it.";82.0652;59.3702;75.744;92.9826;65.5073;61.6571;76.2473;90.5092;77.5405;73.4802;4.06027;A;20;30;40;50;50;50;50;50;35;50;;ai_vs_ai;trump;genz;spicy;120;3;7e2d3056-275b-42ef-b39d-96fa6a1c5ea0;2025-12-18 09:39:53.015835+00
+ec4edd8c-0dad-448e-9756-caad08330b02;"A: Ah, Stephen, your brilliance shines like a supernova, yet your social skills resemble a black hole, drawing every ounce of charisma into oblivion. It seems, my dear friend, all your theories are grounded in the cosmos, but your humor remains firmly planted on Earth. Bas, kuch baat hai!
+B: Amitabh, your voice resonates across generations, much like the cosmic microwave background, yet somehow, the depth of your roles still lacks the gravitational pull needed to keep audiences engaged. Perhaps it's time to rewrite your script; even the event horizon needs to let something through once in a while.
+A: Ah, Stephen, your attempts at wit are as elusive as a rogue planet wandering through the vastness of space. It appears you’ve mastered the art of astrophysics, but clearly, you’ve never ventured into the realm of actual entertainment. A little less theory and a bit more charisma could do wonders, my friend. Shant rahiye!
+B: Amitabh, your defense is as predictable as the cosmic rotation of galaxies—entertaining at first, yet ultimately a mere repetition of the same tired patterns. Charisma, you say? It seems your repertoire falls flat, much like a supernova that fails to ignite. Perhaps you're the real black hole, drawing in attention while offering nothing but emptiness in return.
+A: Ah, Stephen, such cosmic observations from someone whose wit orbits at a staggering distance from brilliance. Your comments are akin to dark matter—present, yet invisible to any discerning mind. You may analyze the universe, but even a black hole wouldn't be able to absorb your humor, as it pales in comparison to the vastness of my presence. Baat gehri hai!
+B: Amitabh, your attempts at grandeur are as transparent as the fabric of spacetime, easily seen through yet bereft of substance. Your so-called presence is merely an illusion, like a mirage in the cosmos—intimidating from afar but vanishing when approached. Hoping for depth in your words is like searching for life in the vacuum of space: utterly fruitless.";"Ah, Stephen, your brilliance shines like a supernova, yet your social skills resemble a black hole, drawing every ounce of charisma into oblivion. It seems, my dear friend, all your theories are grounded in the cosmos, but your humor remains firmly planted on Earth. Bas, kuch baat hai!
+Ah, Stephen, your attempts at wit are as elusive as a rogue planet wandering through the vastness of space. It appears you’ve mastered the art of astrophysics, but clearly, you’ve never ventured into the realm of actual entertainment. A little less theory and a bit more charisma could do wonders, my friend. Shant rahiye!
+Ah, Stephen, such cosmic observations from someone whose wit orbits at a staggering distance from brilliance. Your comments are akin to dark matter—present, yet invisible to any discerning mind. You may analyze the universe, but even a black hole wouldn't be able to absorb your humor, as it pales in comparison to the vastness of my presence. Baat gehri hai!";"Amitabh, your voice resonates across generations, much like the cosmic microwave background, yet somehow, the depth of your roles still lacks the gravitational pull needed to keep audiences engaged. Perhaps it's time to rewrite your script; even the event horizon needs to let something through once in a while.
+Amitabh, your defense is as predictable as the cosmic rotation of galaxies—entertaining at first, yet ultimately a mere repetition of the same tired patterns. Charisma, you say? It seems your repertoire falls flat, much like a supernova that fails to ignite. Perhaps you're the real black hole, drawing in attention while offering nothing but emptiness in return.
+Amitabh, your attempts at grandeur are as transparent as the fabric of spacetime, easily seen through yet bereft of substance. Your so-called presence is merely an illusion, like a mirage in the cosmos—intimidating from afar but vanishing when approached. Hoping for depth in your words is like searching for life in the vacuum of space: utterly fruitless.";80.4449;56.3339;75.0492;64.6459;73.9355;61.1503;78.7785;59.3825;69.1185;68.3117;0.806771;TIE;30;20;10;0;10;10;10;20;15;12.5;;ai_vs_ai;amitabh;hawking;spicy;120;3;b2e37cb2-b358-4548-bad1-5baadcab8ab0;2025-12-18 09:42:07.518875+00
+58a87187-9489-45bd-beeb-1ebb76df4690;"A: You look like you never tasted food
+B: Your opinion on food is as seasoned as a cardboard box—bland and utterly recycled.
+A: And you're is as old as you. Dead to be more precise
+B: Ah, much like your culinary wisdom, your insults are overcooked and lacking in flavor.";"You look like you never tasted food
+And you're is as old as you. Dead to be more precise";"Your opinion on food is as seasoned as a cardboard box—bland and utterly recycled.
+Ah, much like your culinary wisdom, your insults are overcooked and lacking in flavor.";72.7516;56.7308;68.5305;90.0241;72.273;62.4422;73.9539;88.9248;72.0092;74.3985;2.38924;B;40;60;80;90;50;70;50;100;67.5;67.5;;human_vs_ai;;gandhi;spicy;60;3;65167736-7362-4c82-8a1c-07ff23e0530d;2025-12-18 14:13:07.321619+00
